@@ -78,13 +78,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   return()
 endif()
 
-function(check_variable var_name expected_value)
-  if(NOT "x${${var_name}}" STREQUAL "x${expected_value}")
-    message(FATAL_ERROR "Problem with mark_as_superbuild() - CMake variable [${var_name}] is incorrectly set !\n"
-                        "current:${${var_name}}\n"
-                        "expected:${expected_value}")
-  endif()
-endfunction()
+include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
 
 check_variable(FOO_OPTION "ON")
 check_variable(FOO_VAR "FooVar")
