@@ -7,7 +7,7 @@ set(depends LibF LibG)
 
 superbuild_include_dependencies(${proj_libd}
   PROJECT_VAR proj_libd
-  DEPENDENCIES_VAR depends
+  DEPENDS_VAR depends
   EP_ARGS_VAR ep_args
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd}
   )

@@ -56,7 +56,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
 endif()
 
-set(${PROJECT_NAME}_DEPENDENCIES LibB LibC LibE)
+set(${PROJECT_NAME}_DEPENDS LibB LibC LibE)
 
 superbuild_include_dependencies(${PROJECT_NAME} PROJECT_VAR PROJECT_NAME)
 
@@ -71,7 +71,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     DEPENDS
-      ${${PROJECT_NAME}_DEPENDENCIES}
+      ${${PROJECT_NAME}_DEPENDS}
     )
   return()
 endif()
