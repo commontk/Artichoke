@@ -30,11 +30,10 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(BAR_VAR_WITH_LABELS "BarVarWithLabels")
   mark_as_superbuild(VARS BAR_VAR_WITH_LABELS LABELS "LABEL_B")
 
-  set(LibA_VAR "LibA")
-  mark_as_superbuild(VARS LibA_VAR PROJECTS LibA)
-
-  set(LibB_VAR "LibB")
-  mark_as_superbuild(VARS LibB_VAR PROJECTS LibB)
+  foreach(lib LibA LibB)
+    set(${lib}_VAR ${lib})
+    mark_as_superbuild(VARS ${lib}_VAR PROJECTS ${lib})
+  endforeach()
 
   set(LibA_VAR_WITH_LABELS "LibAWithLabels")
   mark_as_superbuild(VARS LibA_VAR_WITH_LABELS PROJECTS LibA LABELS "LABEL_A")
@@ -48,8 +47,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(ALL_PROJECTS_VAR "AllProjectsVar")
   mark_as_superbuild(VARS ALL_PROJECTS_VAR ALL_PROJECTS)
 
-  #set(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
-  #mark_as_superbuild(VARS MULTIPROJECT_VAR_WITH_LABELS PROJECTS ${PROJECT_NAME} LibA LABELS "MULTIPROJECT")
+  # XXX Add 'ALL_PROJECTS' test with labels
 
   set(WITHCOLON_VAR "c:/path/to/something" CACHE PATH "Variable with colon")
   mark_as_superbuild(WITHCOLON_VAR)
