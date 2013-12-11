@@ -8,14 +8,13 @@ set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
+check_variable(proj "LibA")
+check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} "")
+
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
 endif()
-
-mark_as_superbuild(
-  VARS ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}:BOOL
-  LABELS "USE_SYSTEM"
-  )
 
 # Sanity checks
 if(DEFINED LibA_DIR AND NOT EXISTS ${LibA_DIR})

@@ -8,14 +8,13 @@ set(${proj_libd}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj_libd)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
+check_variable(proj_libd "LibD")
+check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd} 1)
+
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd})
   unset(LibD_DIR CACHE)
 endif()
-
-mark_as_superbuild(
-  VARS ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd}:BOOL
-  LABELS "USE_SYSTEM"
-  )
 
 # Sanity checks
 if(DEFINED LibD_DIR AND NOT EXISTS ${LibD_DIR})

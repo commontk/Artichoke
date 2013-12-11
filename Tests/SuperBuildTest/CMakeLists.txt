@@ -98,8 +98,6 @@ check_variable(LibA_DIR ${expected_LibA_DIR})
 get_filename_component(expected_LibB_DIR "${CMAKE_CURRENT_BINARY_DIR}/../LibB-build" REALPATH)
 check_variable(LibB_DIR ${expected_LibB_DIR})
 
-check_variable(SuperBuildTest_EP_LABEL_USE_SYSTEM
-  "${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibA;${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibB;${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibD;${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibA "")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibB "")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
