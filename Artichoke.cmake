@@ -354,7 +354,7 @@ function(_sb_get_external_project_arguments proj varname)
 endfunction()
 
 function(_sb_update_indent proj)
-  superbuild_stack_size(SUPERBUILD_PROJECT_STACK _stack_size)
+  superbuild_stack_size(SB_PROJECT_STACK _stack_size)
   set(_indent "")
   if(_stack_size GREATER 0)
     foreach(not_used RANGE 1 ${_stack_size})
@@ -449,7 +449,7 @@ macro(superbuild_include_dependencies)
     message(FATAL_ERROR "${proj}_DEPENDENCIES variable is NOT defined !")
   endif()
 
-  superbuild_stack_size(SUPERBUILD_PROJECT_STACK _stack_size)
+  superbuild_stack_size(SB_PROJECT_STACK _stack_size)
   if(_stack_size EQUAL 0)
     set(SUPERBUILD_TOPLEVEL_PROJECT ${proj})
   endif()
@@ -497,7 +497,7 @@ macro(superbuild_include_dependencies)
     endforeach()
   endif()
 
-  superbuild_stack_push(SUPERBUILD_PROJECT_STACK ${proj})
+  superbuild_stack_push(SB_PROJECT_STACK ${proj})
 
   # Include dependencies
   foreach(dep ${${proj}_DEPENDENCIES})
@@ -516,7 +516,7 @@ macro(superbuild_include_dependencies)
     endif()
   endforeach()
 
-  superbuild_stack_pop(SUPERBUILD_PROJECT_STACK proj)
+  superbuild_stack_pop(SB_PROJECT_STACK proj)
 
   # If project being process has dependencies, indicates it has also been added.
   if(NOT "${${proj}_DEPENDENCIES}" STREQUAL "")
