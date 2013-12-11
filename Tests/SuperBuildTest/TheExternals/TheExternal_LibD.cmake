@@ -31,6 +31,6 @@ if(NOT DEFINED LibD_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd})
   message(FATAL_ERROR "Disabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd} is not supported !")
 
 else()
-  superbuild_add_empty_external_project(${proj_libd} "${depends}")
+  superbuild_add_empty_external_project(${proj_libd} DEPENDS "${depends}")
 endif()
 

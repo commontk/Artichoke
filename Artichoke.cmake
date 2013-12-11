@@ -619,16 +619,27 @@ endmacro()
 #! Doing so allows to keep the external project dependency system happy.
 #!
 #! \ingroup CMakeUtilities
-macro(superbuild_add_empty_external_project proj dependencies)
+macro(superbuild_add_empty_external_project project_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs DEPENDS)
+  cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  ExternalProject_Add(${proj}
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-    BINARY_DIR ${proj}-build
+  # Sanity checks
+  if(x${project_name} STREQUAL xDEPENDS)
+    message(FATAL_ERROR "Argument <project_name> is missing !")
+  endif()
+  if(_sb_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Invalid arguments: ${_sb_UNPARSED_ARGUMENTS}")
+  endif()
+
+  ExternalProject_Add(${project_name}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${project_name}
+    BINARY_DIR ${project_name}-build
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    DEPENDS
-      ${dependencies}
+    DEPENDS ${_sb_DEPENDS}
     )
 endmacro()
