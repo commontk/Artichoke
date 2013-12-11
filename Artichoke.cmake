@@ -317,9 +317,10 @@ function(_sb_get_external_project_arguments proj varname)
   foreach(property CMAKE_ARGS CMAKE_CACHE_ARGS)
     get_property(${proj}_EP_PROPERTY_${property} GLOBAL PROPERTY ${proj}_EP_PROPERTY_${property})
     get_property(${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property} GLOBAL PROPERTY ${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property})
-    if(${proj}_EP_PROPERTY_${property} OR ${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property})
-      list(APPEND _ep_arguments ${property}
-        ${${proj}_EP_PROPERTY_${property}} ${${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property}})
+    set(_all ${${proj}_EP_PROPERTY_${property}} ${${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property}})
+    if(_all)
+      list(REMOVE_DUPLICATES _all)
+      list(APPEND _ep_arguments ${property} ${_all})
     endif()
   endforeach()
 
