@@ -449,7 +449,7 @@ macro(superbuild_include_dependencies project_name)
   endforeach()
 
   # Skip if project already included
-  get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
+  get_property(_is_included GLOBAL PROPERTY SB_${_sb_proj}_FILE_INCLUDED)
   if(_is_included)
     return()
   endif()
