@@ -41,6 +41,10 @@ add_cmakescript_test(_sb_cmakevar_to_cmakearg_test ArtichokeTest)
 add_cmakescript_test(_sb_extract_varname_and_vartype_test ArtichokeTest)
 add_cmakescript_test(_sb_extract_varname_and_vartype_test ArtichokeTest)
 
+add_test(cmake_superbuild_test_clean ${CMAKE_COMMAND}
+    -E remove_directory ${tests_binary_dir}/SuperBuildTest
+    )
+
 add_test(cmake_superbuild_test ${CMAKE_CTEST_COMMAND}
     --build-and-test
     "${tests_source_dir}/SuperBuildTest"
@@ -51,5 +55,9 @@ add_test(cmake_superbuild_test ${CMAKE_CTEST_COMMAND}
     --force-new-ctest-process
     --test-command ${CMAKE_CTEST_COMMAND} -V
     )
-set_tests_properties(cmake_superbuild_test PROPERTIES LABELS CMake)
+set_tests_properties(cmake_superbuild_test
+    PROPERTIES
+      DEPENDS cmake_superbuild_test_clean
+      LABELS CMake
+    )
 
