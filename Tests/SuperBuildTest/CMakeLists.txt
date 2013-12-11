@@ -30,7 +30,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(BAR_VAR_WITH_LABELS "BarVarWithLabels")
   mark_as_superbuild(VARS BAR_VAR_WITH_LABELS LABELS "LABEL_B")
 
-  foreach(lib LibA LibB)
+  foreach(lib LibA LibB LibE)
     set(${lib}_VAR ${lib})
     mark_as_superbuild(VARS ${lib}_VAR PROJECTS ${lib})
   endforeach()
@@ -56,13 +56,13 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
 endif()
 
-set(${PROJECT_NAME}_DEPENDENCIES LibA LibB LibC)
+set(${PROJECT_NAME}_DEPENDENCIES LibB LibC LibE)
 
-superbuild_include_dependencies(${PROJECT_NAME})
+superbuild_include_dependencies(${PROJECT_NAME} PROJECT_VAR PROJECT_NAME)
 
 if(${PROJECT_NAME}_SUPERBUILD)
   ExternalProject_Add(${PROJECT_NAME}
-    ${${PROJECT_NAME}_EXTERNAL_PROJECT_ARGS}
+    ${${PROJECT_NAME}_EP_ARGS}
     DOWNLOAD_COMMAND ""
     CMAKE_CACHE_ARGS
       -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
@@ -88,7 +88,7 @@ check_variable(BAR_VAR_WITH_LABELS "BarVarWithLabels")
 check_variable(SuperBuildTest_EP_LABEL_LABEL_A "FOO_VAR_WITH_LABELS")
 check_variable(SuperBuildTest_EP_LABEL_LABEL_B "FOO_VAR_WITH_LABELS;BAR_VAR_WITH_LABELS")
 
-check_variable(SuperBuildTest_EP_LABEL_FIND_PACKAGE "LibA_DIR;LibB_DIR")
+check_variable(SuperBuildTest_EP_LABEL_FIND_PACKAGE "LibA_DIR;LibB_DIR;LibF_DIR;LibG_DIR;LibE_DIR")
 
 get_filename_component(expected_LibA_DIR "${CMAKE_CURRENT_BINARY_DIR}/../LibA-build" REALPATH)
 check_variable(LibA_DIR ${expected_LibA_DIR})

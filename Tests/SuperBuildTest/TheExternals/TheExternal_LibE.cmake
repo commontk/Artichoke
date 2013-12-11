@@ -1,20 +1,20 @@
 #
-# LibA
+# LibE
 #
 
-set(proj LibA)
-set(depends "")
+set(proj LibE)
+set(${proj}_DEPENDENCIES "LibA")
 
 superbuild_include_dependencies(${proj}
   PROJECT_VAR proj
-  DEPENDENCIES_VAR depends
-  EP_ARGS_VAR ep_args
-  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
+
+
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
-check_variable(proj "LibA")
-check_variable(depends "")
+check_variable(proj "LibE")
+check_variable(${proj}_DEPENDENCIES "LibA")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} "")
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -22,28 +22,28 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 endif()
 
 # Sanity checks
-if(DEFINED LibA_DIR AND NOT EXISTS ${LibA_DIR})
-  message(FATAL_ERROR "LibA_DIR variable is defined but corresponds to non-existing directory")
+if(DEFINED LibE_DIR AND NOT EXISTS ${LibE_DIR})
+  message(FATAL_ERROR "LibE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-if(NOT DEFINED LibA_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED LibE_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
-    ${ep_args}
+    ${${proj}_EP_ARGS}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Lib
     BINARY_DIR ${proj}-build
     DOWNLOAD_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    DEPENDS ${depends}
+    DEPENDS ${${proj}_DEPENDENCIES}
     )
-  set(LibA_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(LibE_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  superbuild_add_empty_external_project(${proj} "${depends}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
 mark_as_superbuild(
-  VARS LibA_DIR:PATH
+  VARS LibE_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

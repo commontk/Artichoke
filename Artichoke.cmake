@@ -403,24 +403,50 @@ function(superbuild_stack_pop stack_name item_var)
   endif()
 endfunction()
 
-#
-# superbuild_include_dependencies(<project>)
-#
-# superbuild_include_dependencies(PROJECT_VAR <project_var>)
-#
-macro(superbuild_include_dependencies)
+#!
+#! superbuild_include_dependencies(<project_name>
+#!     [PROJECT_VAR <project_var>]
+#!     [EP_ARGS_VAR <external_project_args_var>]
+#!     [DEPENDENCIES_VAR <dependencies_var>]
+#!     [USE_SYSTEM_VAR <use_system_var>]
+#!    )
+#!
+macro(superbuild_include_dependencies project_name)
   set(options)
-  set(oneValueArgs PROJECT_VAR)
+  set(oneValueArgs PROJECT_VAR DEPENDENCIES_VAR EP_ARGS_VAR USE_SYSTEM_VAR)
   set(multiValueArgs)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  # XXX Implement invalid parameter checking
-
-  if(NOT "x" STREQUAL "x${_sb_PROJECT_VAR}")
-    set(proj ${${_sb_PROJECT_VAR}})
-  else()
-    set(proj ${_sb_UNPARSED_ARGUMENTS})
+  # Sanity checks
+  if(x${project_name} STREQUAL xPROJECT_VAR OR
+      x${project_name} STREQUAL xEP_ARGS_VAR OR
+      x${project_name} STREQUAL xDEPENDENCIES_VAR OR
+      x${project_name} STREQUAL xUSE_SYSTEM_VAR)
+    message(FATAL_ERROR "Argument <project_name> is missing !")
   endif()
+  if(_sb_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Invalid arguments: ${_sb_UNPARSED_ARGUMENTS}")
+  endif()
+  if(_sb_PROJECT_VAR AND NOT x${project_name} STREQUAL x${${_sb_PROJECT_VAR}})
+    message(FATAL_ERROR
+      "Argument <project_name>:${project_name} and PROJECT_VAR:${_sb_PROJECT_VAR}:${${_sb_PROJECT_VAR}} are different !")
+  endif()
+
+  set(_sb_proj ${project_name})
+
+  # Set default for optional PROJECT_VAR parameter
+  if(NOT _sb_PROJECT_VAR)
+    set(_sb_PROJECT_VAR proj)
+    #message("Setting _sb_PROJECT_VAR with default value '${_sb_PROJECT_VAR}'")
+  endif()
+
+  # Set default for optional DEPENDENCIES_VAR and EP_ARGS parameters
+  foreach(param DEPENDENCIES EP_ARGS)
+    if(NOT _sb_${param}_VAR)
+      set(_sb_${param}_VAR ${_sb_proj}_${param})
+      #message("Setting _sb_${param}_VAR with default value '${_sb_${param}_VAR}'")
+    endif()
+  endforeach()
 
   # Skip if project already included
   get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
@@ -429,31 +455,42 @@ macro(superbuild_include_dependencies)
   endif()
 
   # Set top level project
-  # Sanity checks
-  if(NOT DEFINED ${proj}_DEPENDENCIES)
-    message(FATAL_ERROR "${proj}_DEPENDENCIES variable is NOT defined !")
-  endif()
-
   superbuild_stack_size(SB_PROJECT_STACK _stack_size)
   if(_stack_size EQUAL 0)
-    set(SUPERBUILD_TOPLEVEL_PROJECT ${proj})
+    set(SUPERBUILD_TOPLEVEL_PROJECT ${_sb_proj})
   endif()
 
-  _sb_update_indent(${proj})
+  # Set default for optional USE_SYSTEM_VAR parameter
+  if(NOT _sb_USE_SYSTEM_VAR)
+    set(_sb_USE_SYSTEM_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${_sb_proj})
+    #message("Setting _sb_USE_SYSTEM_VAR with default value '${_sb_USE_SYSTEM_VAR}'")
+  endif()
+
+  # Set local variables
+  set(_sb_DEPENDENCIES ${${_sb_DEPENDENCIES_VAR}})
+  set(_sb_USE_SYSTEM ${${_sb_USE_SYSTEM_VAR}})
+
+  _sb_update_indent(${_sb_proj})
 
   # Keep track of the projects
-  list(APPEND __epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects ${proj})
+  list(APPEND SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDENCIES ${_sb_proj})
 
-  # Is this the first run ? (used to set the <SUPERBUILD_TOPLEVEL_PROJECT>_USE_SYSTEM_* variables)
-  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SB_FIRST_PASS)
+  # Use system ?
+  get_property(_use_system_set GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM SET)
+  if(_use_system_set)
+    get_property(_sb_USE_SYSTEM GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM)
+  endif()
+
+  # Is this the first run ?
+  if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SB_FIRST_PASS)
     message(STATUS "SuperBuild - First pass")
     set(SB_FIRST_PASS TRUE)
   endif()
 
   # Display dependency of project being processed
-  if(${proj}_DEPENDENCIES)
+  if(_sb_DEPENDENCIES)
     set(dependency_str "")
-    foreach(dep ${${proj}_DEPENDENCIES})
+    foreach(dep ${_sb_DEPENDENCIES})
       get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
       set(_include_status "")
       if(_is_included)
@@ -461,23 +498,29 @@ macro(superbuild_include_dependencies)
       endif()
       set(dependency_str "${dependency_str}${dep}${_include_status}, ")
     endforeach()
-    superbuild_message(${proj} "${proj} => Requires ${dependency_str}")
+    superbuild_message(${_sb_proj} "${_sb_proj} => Requires ${dependency_str}")
   endif()
 
-  if(NOT ${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
-    foreach(dep ${${proj}_DEPENDENCIES})
-      if(${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
-        set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} ${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
-        #superbuild_message(${proj}
-        #  "${proj}_USE_SYSTEM_${dep} set to [${proj}_USE_SYSTEM_${proj}:${${proj}_USE_SYSTEM_${proj}}]")
+  if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
+    foreach(dep ${_sb_DEPENDENCIES})
+      if(_sb_USE_SYSTEM)
+        set_property(GLOBAL PROPERTY SB_${dep}_USE_SYSTEM ${_sb_USE_SYSTEM})
+        #superbuild_message(${_sb_proj} "Property SB_${dep}_USE_SYSTEM set to [${_sb_USE_SYSTEM_VAR}:${_sb_USE_SYSTEM}]")
       endif()
     endforeach()
   endif()
 
-  superbuild_stack_push(SB_PROJECT_STACK ${proj})
+  # Save variables
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_DEPENDENCIES     ${_sb_DEPENDENCIES})
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_DEPENDENCIES_VAR ${_sb_DEPENDENCIES_VAR})
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_EP_ARGS_VAR      ${_sb_EP_ARGS_VAR})
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM       ${_sb_USE_SYSTEM})
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM_VAR   ${_sb_USE_SYSTEM_VAR})
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_PROJECT_VAR      ${_sb_PROJECT_VAR})
+  superbuild_stack_push(SB_PROJECT_STACK ${_sb_proj})
 
   # Include dependencies
-  foreach(dep ${${proj}_DEPENDENCIES})
+  foreach(dep ${_sb_DEPENDENCIES})
     get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _is_included)
       # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
@@ -494,62 +537,80 @@ macro(superbuild_include_dependencies)
     endif()
   endforeach()
 
-  superbuild_stack_pop(SB_PROJECT_STACK proj)
+  # Restore variables
+  superbuild_stack_pop(SB_PROJECT_STACK _sb_proj)
+  get_property(_sb_PROJECT_VAR      GLOBAL PROPERTY SB_${_sb_proj}_PROJECT_VAR)
+  get_property(_sb_USE_SYSTEM_VAR   GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM_VAR)
+  get_property(_sb_USE_SYSTEM       GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM)
+  get_property(_sb_EP_ARGS_VAR      GLOBAL PROPERTY SB_${_sb_proj}_EP_ARGS_VAR)
+  get_property(_sb_DEPENDENCIES_VAR GLOBAL PROPERTY SB_${_sb_proj}_DEPENDENCIES_VAR)
+  get_property(_sb_DEPENDENCIES     GLOBAL PROPERTY SB_${_sb_proj}_DEPENDENCIES)
+
   # Use system ?
   set(_include_type "")
-  if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj})
+  if(_sb_USE_SYSTEM)
     set(_include_type " (SYSTEM)")
   endif()
-  superbuild_message(${proj} "${proj}[OK]${_include_type}")
+  superbuild_message(${_sb_proj} "${_sb_proj}[OK]${_include_type}")
 
-  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SB_FIRST_PASS)
+  if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SB_FIRST_PASS)
     message(STATUS "SuperBuild - First pass - done")
 
-    unset(${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES) # XXX - Refactor
+    set(${SUPERBUILD_TOPLEVEL_PROJECT}_updated_dependencies "")
 
     set(SB_FIRST_PASS FALSE)
 
-    foreach(possible_proj ${__epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects})
+    foreach(possible_proj ${SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDENCIES})
 
       set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
 
-      if(NOT ${possible_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
+      if(NOT ${possible_proj} STREQUAL ${_sb_proj})
         set(_include_project 1)
         if(COMMAND superbuild_is_external_project_includable)
           superbuild_is_external_project_includable("${possible_proj}" _include_project)
         endif()
         if(_include_project)
-          list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES ${possible_proj})
+          list(APPEND ${_sb_proj}_updated_dependencies ${possible_proj})
         else()
-          if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
+          if(${_sb_proj}_SUPERBUILD)
             superbuild_message(STATUS "${possible_proj}[OPTIONAL]")
           endif()
         endif()
       endif()
     endforeach()
 
-    list(REMOVE_DUPLICATES ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES)
+    list(REMOVE_DUPLICATES ${_sb_proj}_updated_dependencies)
 
     if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
-      superbuild_include_dependencies(${SUPERBUILD_TOPLEVEL_PROJECT})
+      superbuild_include_dependencies(${_sb_proj}
+        PROJECT_VAR SUPERBUILD_TOPLEVEL_PROJECT
+        DEPENDENCIES_VAR ${_sb_proj}_updated_dependencies
+        EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
+        USE_SYSTEM_VAR _sb_USE_SYSTEM
+        )
     endif()
 
     set(SB_FIRST_PASS TRUE)
   endif()
 
-  if(_sb_PROJECT_VAR)
-    set(${_sb_PROJECT_VAR} ${proj})
-  endif()
-
   if(SB_FIRST_PASS)
-    if(NOT ${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
+    if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
       return()
     endif()
   else()
-    unset(${proj}_EXTERNAL_PROJECT_ARGS)
-    _sb_get_external_project_arguments(${proj} ${proj}_EXTERNAL_PROJECT_ARGS)
-    #message("${proj}_EXTERNAL_PROJECT_ARGS:${${proj}_EXTERNAL_PROJECT_ARGS}")
+    _sb_get_external_project_arguments(${_sb_proj} ${_sb_EP_ARGS_VAR})
   endif()
+
+  # Set public variables
+  set(${_sb_PROJECT_VAR} ${_sb_proj})
+  set(${_sb_DEPENDENCIES_VAR} ${_sb_DEPENDENCIES})
+  set(${_sb_USE_SYSTEM_VAR} ${_sb_USE_SYSTEM})
+
+  #message("[${_sb_proj}] #################################")
+  #message("[${_sb_proj}] Setting ${_sb_PROJECT_VAR}:${_sb_proj}")
+  #message("[${_sb_proj}] Setting ${_sb_EP_ARGS_VAR}:${${_sb_EP_ARGS_VAR}}")
+  #message("[${_sb_proj}] Setting ${_sb_DEPENDENCIES_VAR}:${_sb_DEPENDENCIES}")
+  #message("[${_sb_proj}] Setting ${_sb_USE_SYSTEM_VAR}:${_sb_USE_SYSTEM}")
 endmacro()
 
 #!

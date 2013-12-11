@@ -3,13 +3,18 @@
 #
 
 set(proj LibB)
+set(depends LibA)
 
-set(${proj}_DEPENDENCIES LibA)
-
-superbuild_include_dependencies(PROJECT_VAR proj)
+superbuild_include_dependencies(${proj}
+  PROJECT_VAR proj
+  DEPENDENCIES_VAR depends
+  EP_ARGS_VAR ep_args
+  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
 check_variable(proj "LibB")
+check_variable(depends "LibA")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} "")
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -24,19 +29,18 @@ endif()
 if(NOT DEFINED LibB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
-    ${${proj}_EXTERNAL_PROJECT_ARGS}
+    ${ep_args}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Lib
     BINARY_DIR ${proj}-build
     DOWNLOAD_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    DEPENDS
-      ${${proj}_DEPENDENCIES}
+    DEPENDS ${depends}
     )
   set(LibB_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${depends}")
 endif()
 
 mark_as_superbuild(

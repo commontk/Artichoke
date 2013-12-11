@@ -31,6 +31,11 @@ elseif(PROJECT_NAME STREQUAL "LibB")
   check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
   check_variable(LibB_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
 
+
+elseif(PROJECT_NAME STREQUAL "LibE")
+
+  check_variable(LibE_VAR "LibE")
+
 else()
   message(FATAL_ERROR "Unknown project name: ${PROJECT_NAME}")
 endif()

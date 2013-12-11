@@ -3,13 +3,18 @@
 #
 
 set(proj LibC)
+set(depends LibD)
 
-set(${proj}_DEPENDENCIES LibD)
-
-superbuild_include_dependencies(PROJECT_VAR proj)
+superbuild_include_dependencies(${proj}
+  PROJECT_VAR proj
+  DEPENDENCIES_VAR depends
+  EP_ARGS_VAR ep_args
+  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
 check_variable(proj "LibC")
+check_variable(depends "LibD")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} 1)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -26,6 +31,6 @@ if(NOT DEFINED LibC_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    message(FATAL_ERROR "Disabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
 
 else()
-  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${depends}")
 endif()
 
