@@ -365,7 +365,7 @@ function(_sb_update_indent proj)
 endfunction()
 
 function(superbuild_message proj msg)
-  if(NOT SUPERBUILD_FIRST_PASS)
+  if(NOT SB_FIRST_PASS)
     get_property(_indent GLOBAL PROPERTY SUPERBUILD_${proj}_INDENT)
     message(STATUS "SuperBuild - ${_indent}${msg}")
   endif()
@@ -460,9 +460,9 @@ macro(superbuild_include_dependencies)
   list(APPEND __epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects ${proj})
 
   # Is this the first run ? (used to set the <SUPERBUILD_TOPLEVEL_PROJECT>_USE_SYSTEM_* variables)
-  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SUPERBUILD_FIRST_PASS)
+  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SB_FIRST_PASS)
     message(STATUS "SuperBuild - First pass")
-    set(SUPERBUILD_FIRST_PASS TRUE)
+    set(SB_FIRST_PASS TRUE)
   endif()
 
   # Display dependency of project being processed
@@ -490,7 +490,7 @@ macro(superbuild_include_dependencies)
       if(${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
         set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} ${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
       endif()
-      #if(SUPERBUILD_FIRST_PASS)
+      #if(SB_FIRST_PASS)
       #  message("${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} set to "
       #          "[${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}:${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}}]")
       #endif()
@@ -527,12 +527,12 @@ macro(superbuild_include_dependencies)
     superbuild_message(${proj} ${_msg})
   endif()
 
-  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SUPERBUILD_FIRST_PASS)
+  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SB_FIRST_PASS)
     message(STATUS "SuperBuild - First pass - done")
 
     unset(${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES) # XXX - Refactor
 
-    set(SUPERBUILD_FIRST_PASS FALSE)
+    set(SB_FIRST_PASS FALSE)
 
     foreach(possible_proj ${__epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects})
 
@@ -559,14 +559,14 @@ macro(superbuild_include_dependencies)
       superbuild_include_dependencies(${SUPERBUILD_TOPLEVEL_PROJECT})
     endif()
 
-    set(SUPERBUILD_FIRST_PASS TRUE)
+    set(SB_FIRST_PASS TRUE)
   endif()
 
   if(_sb_PROJECT_VAR)
     set(${_sb_PROJECT_VAR} ${proj})
   endif()
 
-  if(SUPERBUILD_FIRST_PASS)
+  if(SB_FIRST_PASS)
     if(NOT ${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
       return()
     endif()
