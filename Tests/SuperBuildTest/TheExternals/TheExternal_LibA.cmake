@@ -2,8 +2,6 @@
 # LibA
 #
 
-superbuild_include_once()
-
 set(proj LibA)
 
 set(${proj}_DEPENDENCIES "")

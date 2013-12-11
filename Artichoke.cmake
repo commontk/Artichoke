@@ -39,29 +39,6 @@ else()
   set(EP_CMAKE_GENERATOR "${CMAKE_GENERATOR}")
 endif()
 
-#
-# superbuild_include_once()
-#
-# superbuild_include_once() is a macro intented to be used as include guard.
-#
-# It ensures that the CMake code placed after the include guard in a CMake file included
-# using either 'include(/path/to/file.cmake)' or 'include(cmake_module)' will be executed
-# once.
-#
-# It internally set the global property '<CMAKE_CURRENT_LIST_FILENAME>_FILE_INCLUDED' to check if
-# a file has already been included.
-#
-macro(superbuild_include_once)
-  # Make sure this file is included only once
-  get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-  set(_property_name ${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  get_property(${_property_name} GLOBAL PROPERTY ${_property_name})
-  if(${_property_name})
-    return()
-  endif()
-  set_property(GLOBAL PROPERTY ${_property_name} 1)
-endmacro()
-
 #!
 #! mark_as_superbuild(<varname1>[:<vartype1>] [<varname2>[:<vartype2>] [...]])
 #!
@@ -444,6 +421,11 @@ macro(superbuild_include_dependencies)
     set(proj ${_sb_UNPARSED_ARGUMENTS})
   endif()
 
+  get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
+  if(_is_included)
+    return()
+  endif()
+
   # Sanity checks
   if(NOT DEFINED ${proj}_DEPENDENCIES)
     message(FATAL_ERROR "${proj}_DEPENDENCIES variable is NOT defined !")
@@ -475,7 +457,7 @@ macro(superbuild_include_dependencies)
   else()
     set(dependency_str " ")
     foreach(dep ${${proj}_DEPENDENCIES})
-      get_property(_is_included GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}_FILE_INCLUDED)
+      get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
       if(_is_included)
         set(dependency_str "${dependency_str}${dep}[INCLUDED], ")
       else()
@@ -501,7 +483,7 @@ macro(superbuild_include_dependencies)
 
   # Include dependencies
   foreach(dep ${${proj}_DEPENDENCIES})
-    get_property(_is_included GLOBAL PROPERTY External_${dep}_FILE_INCLUDED)
+    get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _is_included)
       # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
       if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
@@ -513,6 +495,7 @@ macro(superbuild_include_dependencies)
       else()
         message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
       endif()
+      set_property(GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED 1)
     endif()
   endforeach()
 
@@ -536,7 +519,7 @@ macro(superbuild_include_dependencies)
 
     foreach(possible_proj ${__epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects})
 
-      set_property(GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${possible_proj}_FILE_INCLUDED 0)
+      set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
 
       if(NOT ${possible_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
         set(_include_project 1)
