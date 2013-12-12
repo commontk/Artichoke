@@ -6,7 +6,7 @@ string(REPLACE "-build" "" _project_name ${_project_name})
 project(${_project_name} NONE)
 message(STATUS "Configuring project ${PROJECT_NAME}")
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../ArtichokeCheckVariable.cmake)
 
 
 check_variable(ALL_PROJECTS_VAR "AllProjectsVar")

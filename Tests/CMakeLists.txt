@@ -4,17 +4,15 @@ project(ArtichokeTest NONE)
 
 include(CTest)
 
-set(tests_source_dir ${CMAKE_SOURCE_DIR})
-set(tests_binary_dir ${CMAKE_BINARY_DIR})
-
 #
-# Helper macro
+# Helper macros
 #
-macro(add_cmakescript_test testname script)
-  add_test(cmake_${testname} ${CMAKE_COMMAND}
-    -DTEST_${testname}:BOOL=ON
+macro(add_cmakescript_test name script)
+  set(testname ${name}-Test)
+  add_test(${testname} ${CMAKE_COMMAND}
+    -DTEST_${name}_test:BOOL=ON
     -P ${tests_source_dir}/${script}.cmake)
-  set_tests_properties(cmake_${testname} PROPERTIES
+  set_tests_properties(${testname} PROPERTIES
     LABELS CMake
     PASS_REGULAR_EXPRESSION "SUCCESS")
 endmacro()
@@ -33,31 +31,44 @@ if(CMAKE_TEST_GENERATOR_TOOLSET)
     )
 endif()
 
+macro(add_project_test name label)
+  set(testname ${name}-Test)
+  set(_project ${testname})
+  set(_dir ${_project})
+
+  add_test(${_prefix}${testname}_clean ${CMAKE_COMMAND}
+      -E remove_directory ${tests_binary_dir}/${_dir}
+      )
+
+  add_test(${testname} ${CMAKE_CTEST_COMMAND}
+      --build-and-test
+      "${tests_source_dir}/${_dir}"
+      "${tests_binary_dir}/${_dir}"
+      ${build_generator_args}
+      --build-project ${project}
+      --build-exe-dir "${tests_binary_dir}/${_dir}"
+      --force-new-ctest-process
+      --test-command ${CMAKE_CTEST_COMMAND} -V
+      )
+
+  set_tests_properties(${testname}
+      PROPERTIES
+        DEPENDS ${testname}_clean
+        LABELS "CMake;${label}"
+      )
+endmacro()
+
+
 #
 # Add 'CMake script' Tests
 #
-add_cmakescript_test(_sb_list_to_string_test ArtichokeTest)
-add_cmakescript_test(_sb_cmakevar_to_cmakearg_test ArtichokeTest)
-add_cmakescript_test(_sb_extract_varname_and_vartype_test ArtichokeTest)
-add_cmakescript_test(_sb_extract_varname_and_vartype_test ArtichokeTest)
+set(tests_binary_dir ${CMAKE_BINARY_DIR})
 
-add_test(cmake_superbuild_test_clean ${CMAKE_COMMAND}
-    -E remove_directory ${tests_binary_dir}/SuperBuildTest
-    )
+set(tests_source_dir ${CMAKE_SOURCE_DIR})
+add_cmakescript_test(_sb_list_to_string ArtichokeTest)
+add_cmakescript_test(_sb_cmakevar_to_cmakearg ArtichokeTest)
+add_cmakescript_test(_sb_extract_varname_and_vartype ArtichokeTest)
+add_cmakescript_test(_sb_extract_varname_and_vartype ArtichokeTest)
 
-add_test(cmake_superbuild_test ${CMAKE_CTEST_COMMAND}
-    --build-and-test
-    "${tests_source_dir}/SuperBuildTest"
-    "${tests_binary_dir}/SuperBuildTest"
-    ${build_generator_args}
-    --build-project SuperBuildTest
-    --build-exe-dir "${tests_binary_dir}/SuperBuildTest"
-    --force-new-ctest-process
-    --test-command ${CMAKE_CTEST_COMMAND} -V
-    )
-set_tests_properties(cmake_superbuild_test
-    PROPERTIES
-      DEPENDS cmake_superbuild_test_clean
-      LABELS CMake
-    )
-
+set(tests_source_dir ${CMAKE_SOURCE_DIR})
+add_project_test(MarkAsSuperBuild SuperBuild)

@@ -6,7 +6,7 @@ set(EXTERNAL_PROJECT_FILE_PREFIX "TheExternal_")
 include(ExternalProject)
 include(Artichoke)
 
-project(SuperBuildTest NONE)
+project(MarkAsSuperBuild-Test NONE)
 
 option(${PROJECT_NAME}_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends" ON)
 mark_as_advanced(${PROJECT_NAME}_SUPERBUILD)
@@ -76,7 +76,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   return()
 endif()
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
 
 check_variable(FOO_OPTION "ON")
 check_variable(FOO_VAR "FooVar")
@@ -85,10 +85,10 @@ check_variable(FOO_LIST_FOR_CMAKE_CMD "Item1;Item2")
 check_variable(FOO_VAR_WITH_LABELS "FooVarWithLabels")
 check_variable(BAR_VAR_WITH_LABELS "BarVarWithLabels")
 
-check_variable(SuperBuildTest_EP_LABEL_LABEL_A "FOO_VAR_WITH_LABELS")
-check_variable(SuperBuildTest_EP_LABEL_LABEL_B "FOO_VAR_WITH_LABELS;BAR_VAR_WITH_LABELS")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_LABEL_A "FOO_VAR_WITH_LABELS")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_LABEL_B "FOO_VAR_WITH_LABELS;BAR_VAR_WITH_LABELS")
 
-check_variable(SuperBuildTest_EP_LABEL_FIND_PACKAGE "LibA_DIR;LibB_DIR;LibF_DIR;LibG_DIR;LibE_DIR")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_FIND_PACKAGE "LibA_DIR;LibB_DIR;LibF_DIR;LibG_DIR;LibE_DIR")
 
 get_filename_component(expected_LibA_DIR "${CMAKE_CURRENT_BINARY_DIR}/../LibA-build" REALPATH)
 check_variable(LibA_DIR ${expected_LibA_DIR})
@@ -103,7 +103,7 @@ check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibD 1)
 
 check_variable(MULTIPROJECT_VAR "MultiProjectVar")
 
-check_variable(SuperBuildTest_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
 check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
 
 check_variable(ALL_PROJECTS_VAR "AllProjectsVar")

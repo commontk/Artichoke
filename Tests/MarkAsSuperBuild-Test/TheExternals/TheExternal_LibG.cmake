@@ -7,7 +7,7 @@ set(LibG_DEPENDS "LibF")
 superbuild_include_dependencies(LibG)
 
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
 check_variable(proj "LibG")
 check_variable(${proj}_DEPENDS "LibF")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} 1)
