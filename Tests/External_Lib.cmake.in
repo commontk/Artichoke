@@ -3,7 +3,7 @@
 #
 
 set(proj @PROJECT_NAME_CONFIG@)
-set(depends "")
+set(depends "@PROJECT_DEPENDS_CONFIG@")
 
 superbuild_include_dependencies(${proj}
   PROJECT_VAR proj
@@ -14,7 +14,7 @@ superbuild_include_dependencies(${proj}
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
 check_variable(proj "@PROJECT_NAME_CONFIG@")
-check_variable(depends "")
+check_variable(depends "@PROJECT_DEPENDS_CONFIG@")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} "")
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
