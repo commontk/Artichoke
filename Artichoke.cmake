@@ -409,19 +409,22 @@ endfunction()
 #!     [EP_ARGS_VAR <external_project_args_var>]
 #!     [DEPENDS_VAR <depends_var>]
 #!     [USE_SYSTEM_VAR <use_system_var>]
+#!     [SUPERBUILD_VAR <superbuild_var>]
 #!    )
 #!
 macro(superbuild_include_dependencies project_name)
   set(options)
-  set(oneValueArgs PROJECT_VAR DEPENDS_VAR EP_ARGS_VAR USE_SYSTEM_VAR)
+  set(oneValueArgs PROJECT_VAR DEPENDS_VAR EP_ARGS_VAR USE_SYSTEM_VAR SUPERBUILD_VAR)
   set(multiValueArgs)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
-  if(x${project_name} STREQUAL xPROJECT_VAR OR
-      x${project_name} STREQUAL xEP_ARGS_VAR OR
-      x${project_name} STREQUAL xDEPENDS_VAR OR
-      x${project_name} STREQUAL xUSE_SYSTEM_VAR)
+  if(x${project_name} STREQUAL xPROJECT_VAR
+      OR x${project_name} STREQUAL xEP_ARGS_VAR
+      OR x${project_name} STREQUAL xDEPENDS_VAR
+      OR x${project_name} STREQUAL xUSE_SYSTEM_VAR
+      OR x${project_name} STREQUAL xSUPERBUILD_VAR
+      )
     message(FATAL_ERROR "Argument <project_name> is missing !")
   endif()
   if(_sb_UNPARSED_ARGUMENTS)
@@ -464,6 +467,18 @@ macro(superbuild_include_dependencies project_name)
   if(NOT _sb_USE_SYSTEM_VAR)
     set(_sb_USE_SYSTEM_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${_sb_proj})
     #message("Setting _sb_USE_SYSTEM_VAR with default value '${_sb_USE_SYSTEM_VAR}'")
+  endif()
+
+  # Set default for optional SUPERBUILD_VAR parameter
+  if(NOT _sb_SUPERBUILD_VAR)
+    set(_sb_SUPERBUILD_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
+    #message("Setting _sb_SUPERBUILD_VAR with default value '${_sb_SUPERBUILD_VAR}'")
+  endif()
+
+  # Keeping track of variable name independently of the recursion
+  if(NOT DEFINED _sb_SB_VAR)
+    set(_sb_SB_VAR ${_sb_SUPERBUILD_VAR})
+    #message("Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
   endif()
 
   # Set local variables
@@ -571,7 +586,7 @@ macro(superbuild_include_dependencies project_name)
         if(_include_project)
           list(APPEND ${_sb_proj}_updated_depends ${possible_proj})
         else()
-          if(${_sb_proj}_SUPERBUILD)
+          if(${_sb_SB_VAR})
             superbuild_message(${_sb_proj} "${possible_proj}[OPTIONAL]")
           endif()
         endif()
@@ -580,12 +595,13 @@ macro(superbuild_include_dependencies project_name)
 
     list(REMOVE_DUPLICATES ${_sb_proj}_updated_depends)
 
-    if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
+    if(${_sb_SB_VAR})
       superbuild_include_dependencies(${_sb_proj}
         PROJECT_VAR SUPERBUILD_TOPLEVEL_PROJECT
         DEPENDS_VAR ${_sb_proj}_updated_depends
         EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
         USE_SYSTEM_VAR _sb_USE_SYSTEM
+        SUPERBUILD_VAR ${_sb_SB_VAR}
         )
     endif()
 
