@@ -554,11 +554,10 @@ macro(superbuild_include_dependencies project_name)
   superbuild_message(${_sb_proj} "${_sb_proj}[OK]${_include_type}")
 
   if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SB_FIRST_PASS)
-    message(STATUS "SuperBuild - First pass - done")
+    set(SB_FIRST_PASS FALSE)
+    superbuild_message(${_sb_proj} "First pass - done")
 
     set(${SUPERBUILD_TOPLEVEL_PROJECT}_updated_depends "")
-
-    set(SB_FIRST_PASS FALSE)
 
     foreach(possible_proj ${SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDS})
 
@@ -573,7 +572,7 @@ macro(superbuild_include_dependencies project_name)
           list(APPEND ${_sb_proj}_updated_depends ${possible_proj})
         else()
           if(${_sb_proj}_SUPERBUILD)
-            superbuild_message(STATUS "${possible_proj}[OPTIONAL]")
+            superbuild_message(${_sb_proj} "${possible_proj}[OPTIONAL]")
           endif()
         endif()
       endif()
