@@ -596,6 +596,7 @@ macro(superbuild_include_dependencies project_name)
     list(REMOVE_DUPLICATES ${_sb_proj}_updated_depends)
 
     if(${_sb_SB_VAR})
+      set(SB_SECOND_PASS TRUE)
       superbuild_include_dependencies(${_sb_proj}
         PROJECT_VAR SUPERBUILD_TOPLEVEL_PROJECT
         DEPENDS_VAR ${_sb_proj}_updated_depends
@@ -603,17 +604,27 @@ macro(superbuild_include_dependencies project_name)
         USE_SYSTEM_VAR _sb_USE_SYSTEM
         SUPERBUILD_VAR ${_sb_SB_VAR}
         )
+      set(SB_SECOND_PASS FALSE)
     endif()
 
-    set(SB_FIRST_PASS TRUE)
   endif()
 
   if(SB_FIRST_PASS)
     if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
       return()
     endif()
-  else()
+  endif()
+
+  if(SB_SECOND_PASS)
     _sb_get_external_project_arguments(${_sb_proj} ${_sb_EP_ARGS_VAR})
+  endif()
+
+  if(NOT SB_FIRST_PASS AND NOT SB_SECOND_PASS
+      AND ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
+    #superbuild_message(${_sb_proj} "Clean up")
+    unset(_sb_SB_VAR)
+    unset(SB_FIRST_PASS)
+    unset(SB_SECOND_PASS)
   endif()
 
   # Set public variables
