@@ -52,7 +52,7 @@ if(BUILD_EXTERNAL_PROJECTS)
 endif()
 
 #-----------------------------------------------------------------------------
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
 foreach(dep LibA LibB)
   get_filename_component(expected "${CMAKE_CURRENT_BINARY_DIR}/../${dep}-build" REALPATH)

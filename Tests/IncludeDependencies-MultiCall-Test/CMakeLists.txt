@@ -10,19 +10,7 @@ file(MAKE_DIRECTORY ${EXTERNAL_PROJECT_DIR})
 include(ExternalProject)
 include(Artichoke)
 
-#
-# Helper function(s)
-#
-function(_configure_external_projects depends)
-  foreach(dep ${depends})
-    set(PROJECT_NAME_CONFIG ${dep})
-    configure_file(../External_Lib.cmake.in
-      ${EXTERNAL_PROJECT_DIR}/External_${dep}.cmake @ONLY
-      )
-  endforeach()
-endfunction()
-
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
 
 option(BUILD_EXTERNAL_PROJECTS "Build ${PROJECT_NAME} and the projects it depends on." ON)
@@ -32,7 +20,7 @@ foreach(proj ProjectA ProjectB)
   message("-----------------------------------------------------------------------------")
 
   set(${proj}_DEPENDS ${proj}-LibA ${proj}-LibB)
-  _configure_external_projects("${${proj}_DEPENDS}")
+  configure_external_projects_for_test("${${proj}_DEPENDS}")
 
   superbuild_include_dependencies(${proj}
     SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS

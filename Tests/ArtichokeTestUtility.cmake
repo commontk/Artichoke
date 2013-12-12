@@ -1,0 +1,20 @@
+function(check_variable var_name expected_value)
+  if(NOT "x${${var_name}}" STREQUAL "x${expected_value}")
+    message(FATAL_ERROR "CMake variable [${var_name}] is incorrectly set !\n"
+                        "current:${${var_name}}\n"
+                        "expected:${expected_value}")
+  endif()
+endfunction()
+
+function(configure_external_projects_for_test depends)
+  foreach(dep ${depends})
+    set(_ep_file ${EXTERNAL_PROJECT_DIR}/External_${dep}.cmake)
+    if(NOT EXISTS ${_ep_file})
+      set(PROJECT_NAME_CONFIG ${dep})
+      set(PROJECT_DEPENDS_CONFIG ${expected_${dep}_DEPENDS})
+      message(STATUS "Configuring External_${dep}.cmake")
+      configure_file(../External_Lib.cmake.in ${_ep_file} @ONLY)
+      configure_external_projects_for_test("${expected_${dep}_DEPENDS}")
+    endif()
+  endforeach()
+endfunction()

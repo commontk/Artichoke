@@ -12,7 +12,7 @@ superbuild_include_dependencies(${proj_libd}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd}
   )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 check_variable(proj_libd "LibD")
 check_variable(depends "LibF;LibG")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd} 1)

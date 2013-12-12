@@ -19,19 +19,8 @@ include(ExternalProject)
 include(Artichoke)
 
 #-----------------------------------------------------------------------------
-# Generate external projects
-function(_configure_external_projects depends)
-  foreach(dep ${depends})
-    set(_ep_file ${EXTERNAL_PROJECT_DIR}/External_${dep}.cmake)
-    if(NOT EXISTS ${_ep_file})
-      set(PROJECT_NAME_CONFIG ${dep})
-      set(PROJECT_DEPENDS_CONFIG ${expected_${dep}_DEPENDS})
-      message(STATUS "Configuring External_${dep}.cmake")
-      configure_file(../External_Lib.cmake.in ${_ep_file} @ONLY)
-      _configure_external_projects("${expected_${dep}_DEPENDS}")
-    endif()
-  endforeach()
-endfunction()
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
+
 set(expected_ALL_DEPENDS LibA LibB LibC LibD LibE LibF LibG LibH)
 
 set(optional_project LibA)
@@ -47,7 +36,7 @@ set(expected_LibF_DEPENDS "")
 set(expected_LibG_DEPENDS LibE)
 set(expected_LibH_DEPENDS LibD)
 if(BUILD_EXTERNAL_PROJECTS)
-  _configure_external_projects("${expected_ALL_DEPENDS}")
+  configure_external_projects_for_test("${expected_ALL_DEPENDS}")
 endif()
 
 macro(superbuild_is_external_project_includable possible_proj output_var)
@@ -67,8 +56,6 @@ superbuild_include_dependencies(${PROJECT_NAME}
   )
 
 #-----------------------------------------------------------------------------
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
-
 check_variable(${PROJECT_NAME}_DEPENDS "${expected_${PROJECT_NAME}_REQUIRED_DEPENDS}")
 
 # Check properties internally set by superbuild_include_dependencies

@@ -76,7 +76,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
   return()
 endif()
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeCheckVariable.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
 check_variable(FOO_OPTION "ON")
 check_variable(FOO_VAR "FooVar")
