@@ -434,6 +434,12 @@ macro(superbuild_include_dependencies project_name)
 
   set(_sb_proj ${project_name})
 
+  # Skip if project already included
+  get_property(_is_included GLOBAL PROPERTY SB_${_sb_proj}_FILE_INCLUDED)
+  if(_is_included)
+    return()
+  endif()
+
   # Set default for optional PROJECT_VAR parameter
   if(NOT _sb_PROJECT_VAR)
     set(_sb_PROJECT_VAR proj)
@@ -447,12 +453,6 @@ macro(superbuild_include_dependencies project_name)
       #message("Setting _sb_${param}_VAR with default value '${_sb_${param}_VAR}'")
     endif()
   endforeach()
-
-  # Skip if project already included
-  get_property(_is_included GLOBAL PROPERTY SB_${_sb_proj}_FILE_INCLUDED)
-  if(_is_included)
-    return()
-  endif()
 
   # Set top level project
   superbuild_stack_size(SB_PROJECT_STACK _stack_size)
