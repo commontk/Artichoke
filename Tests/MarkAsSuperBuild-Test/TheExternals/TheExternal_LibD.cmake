@@ -5,7 +5,7 @@
 set(proj_libd LibD)
 set(depends LibF LibG)
 
-superbuild_include_dependencies(${proj_libd}
+ExternalProject_Include_Dependencies(${proj_libd}
   PROJECT_VAR proj_libd
   DEPENDS_VAR depends
   EP_ARGS_VAR ep_args
@@ -31,6 +31,6 @@ if(NOT DEFINED LibD_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd})
   message(FATAL_ERROR "Disabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj_libd} is not supported !")
 
 else()
-  superbuild_add_empty_external_project(${proj_libd} DEPENDS "${depends}")
+  ExternalProject_Add_Empty(${proj_libd} DEPENDS "${depends}")
 endif()
 

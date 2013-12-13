@@ -50,7 +50,7 @@ endmacro()
 #-----------------------------------------------------------------------------
 set(${PROJECT_NAME}_DEPENDS LibA LibB LibG LibH)
 
-superbuild_include_dependencies(${PROJECT_NAME}
+ExternalProject_Include_Dependencies(${PROJECT_NAME}
   PROJECT_VAR PROJECT_NAME
   SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS
   )
@@ -58,7 +58,7 @@ superbuild_include_dependencies(${PROJECT_NAME}
 #-----------------------------------------------------------------------------
 check_variable(${PROJECT_NAME}_DEPENDS "${expected_${PROJECT_NAME}_REQUIRED_DEPENDS}")
 
-# Check properties internally set by superbuild_include_dependencies
+# Check properties internally set by ExternalProject_Include_Dependencies
 foreach(dep ${expected_ALL_DEPENDS})
   get_property(prop_SB_${dep}_DEPENDS GLOBAL PROPERTY SB_${dep}_DEPENDS)
   check_variable(prop_SB_${dep}_DEPENDS "${expected_${dep}_DEPENDS}")

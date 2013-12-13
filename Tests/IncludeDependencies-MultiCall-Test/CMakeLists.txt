@@ -48,7 +48,7 @@ foreach(_p ProjectA ProjectB)
   endmacro()
 
   set(proj ${_p})
-  superbuild_include_dependencies(${proj}
+  ExternalProject_Include_Dependencies(${proj}
     SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS
     )
 
@@ -60,7 +60,7 @@ foreach(_p ProjectA ProjectB)
 
   check_variable(${_p}_DEPENDS "${expected_${_p}_REQUIRED_DEPENDS}")
 
-  # Check properties internally set by superbuild_include_dependencies
+  # Check properties internally set by ExternalProject_Include_Dependencies
   foreach(dep ${expected_${_p}_ALL_DEPENDS})
     get_property(prop_SB_${dep}_DEPENDS GLOBAL PROPERTY SB_${dep}_DEPENDS)
     check_variable(prop_SB_${dep}_DEPENDS "${expected_${dep}_DEPENDS}")

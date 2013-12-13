@@ -4,7 +4,7 @@
 
 set(LibG_DEPENDS "LibF")
 
-superbuild_include_dependencies(LibG)
+ExternalProject_Include_Dependencies(LibG)
 
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
@@ -26,7 +26,7 @@ if(NOT DEFINED LibD_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Disabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
 
 else()
-  superbuild_add_empty_external_project(${proj} DEPENDS "${${proj}_DEPENDS}")
+  ExternalProject_Add_Empty(${proj} DEPENDS "${${proj}_DEPENDS}")
 endif()
 
 mark_as_superbuild(

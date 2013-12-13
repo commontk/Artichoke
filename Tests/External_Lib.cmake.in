@@ -5,7 +5,7 @@
 set(proj @PROJECT_NAME_CONFIG@)
 set(depends "@PROJECT_DEPENDS_CONFIG@")
 
-superbuild_include_dependencies(${proj}
+ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
   DEPENDS_VAR depends
   EP_ARGS_VAR ep_args
@@ -40,7 +40,7 @@ if(NOT DEFINED @PROJECT_NAME_CONFIG@_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTE
   set(@PROJECT_NAME_CONFIG@_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  superbuild_add_empty_external_project(${proj} DEPENDS "${depends}")
+  ExternalProject_Add_Empty(${proj} DEPENDS "${depends}")
 endif()
 
 mark_as_superbuild(

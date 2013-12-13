@@ -5,7 +5,7 @@
 set(proj LibB)
 set(depends LibA)
 
-superbuild_include_dependencies(${proj}
+ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
   DEPENDS_VAR depends
   EP_ARGS_VAR ep_args
@@ -40,7 +40,7 @@ if(NOT DEFINED LibB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(LibB_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  superbuild_add_empty_external_project(${proj} DEPENDS "${depends}")
+  ExternalProject_Add_Empty(${proj} DEPENDS "${depends}")
 endif()
 
 mark_as_superbuild(

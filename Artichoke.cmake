@@ -417,7 +417,7 @@ endfunction()
 
 
 #!
-#! superbuild_include_dependencies(<project_name>
+#! ExternalProject_Include_Dependencies(<project_name>
 #!     [PROJECT_VAR <project_var>]
 #!     [EP_ARGS_VAR <external_project_args_var>]
 #!     [DEPENDS_VAR <depends_var>]
@@ -425,7 +425,7 @@ endfunction()
 #!     [SUPERBUILD_VAR <superbuild_var>]
 #!    )
 #!
-macro(superbuild_include_dependencies project_name)
+macro(ExternalProject_Include_Dependencies project_name)
   set(options)
   set(oneValueArgs PROJECT_VAR DEPENDS_VAR EP_ARGS_VAR USE_SYSTEM_VAR SUPERBUILD_VAR)
   set(multiValueArgs)
@@ -615,7 +615,7 @@ macro(superbuild_include_dependencies project_name)
     set(${_sb_DEPENDS_VAR} ${_sb_DEPENDS})
 
     set(SB_SECOND_PASS TRUE)
-    superbuild_include_dependencies(${_sb_proj}
+    ExternalProject_Include_Dependencies(${_sb_proj}
       PROJECT_VAR SUPERBUILD_TOPLEVEL_PROJECT
       DEPENDS_VAR ${_sb_DEPENDS_VAR}
       EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
@@ -662,7 +662,7 @@ endmacro()
 #! Doing so allows to keep the external project dependency system happy.
 #!
 #! \ingroup CMakeUtilities
-macro(superbuild_add_empty_external_project project_name)
+macro(ExternalProject_Add_Empty project_name)
   set(options)
   set(oneValueArgs)
   set(multiValueArgs DEPENDS)

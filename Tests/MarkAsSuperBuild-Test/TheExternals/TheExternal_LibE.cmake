@@ -5,7 +5,7 @@
 set(proj LibE)
 set(${proj}_DEPENDS "LibA")
 
-superbuild_include_dependencies(${proj}
+ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
   )
 
@@ -40,7 +40,7 @@ if(NOT DEFINED LibE_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(LibE_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  superbuild_add_empty_external_project(${proj} DEPENDS "${${proj}_DEPENDS}")
+  ExternalProject_Add_Empty(${proj} DEPENDS "${${proj}_DEPENDS}")
 endif()
 
 mark_as_superbuild(

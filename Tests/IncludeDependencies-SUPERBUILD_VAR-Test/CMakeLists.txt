@@ -28,7 +28,7 @@ option(BUILD_EXTERNAL_PROJECTS "Build ${PROJECT_NAME} and the projects it depend
 set(${PROJECT_NAME}_DEPENDS LibA LibB)
 _configure_external_projects("${${PROJECT_NAME}_DEPENDS}")
 
-superbuild_include_dependencies(${PROJECT_NAME}
+ExternalProject_Include_Dependencies(${PROJECT_NAME}
   PROJECT_VAR PROJECT_NAME
   SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS
   )

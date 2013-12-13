@@ -58,7 +58,7 @@ endif()
 
 set(${PROJECT_NAME}_DEPENDS LibB LibC LibE)
 
-superbuild_include_dependencies(${PROJECT_NAME} PROJECT_VAR PROJECT_NAME)
+ExternalProject_Include_Dependencies(${PROJECT_NAME} PROJECT_VAR PROJECT_NAME)
 
 if(${PROJECT_NAME}_SUPERBUILD)
   ExternalProject_Add(${PROJECT_NAME}
