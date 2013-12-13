@@ -423,7 +423,7 @@ endfunction()
 #!     [DEPENDS_VAR <depends_var>]
 #!     [USE_SYSTEM_VAR <use_system_var>]
 #!     [SUPERBUILD_VAR <superbuild_var>]
-#!    )
+#!   )
 #!
 macro(ExternalProject_Include_Dependencies project_name)
   set(options)
@@ -656,12 +656,12 @@ macro(ExternalProject_Include_Dependencies project_name)
   #message("[${_sb_proj}] Setting ${_sb_USE_SYSTEM_VAR}:${_sb_USE_SYSTEM}")
 endmacro()
 
+
 #!
-#! Convenient macro allowing to define a "empty" project in case an external one is provided
-#! using for example <proj>_DIR.
-#! Doing so allows to keep the external project dependency system happy.
+#! ExternalProject_Add_Empty(<project_name>
+#!     DEPENDS <depends>
+#!   )
 #!
-#! \ingroup CMakeUtilities
 macro(ExternalProject_Add_Empty project_name)
   set(options)
   set(oneValueArgs)
