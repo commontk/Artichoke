@@ -17,37 +17,56 @@ option(BUILD_EXTERNAL_PROJECTS "Build ${PROJECT_NAME} and the projects it depend
 
 
 #-----------------------------------------------------------------------------
-foreach(_p ProjectA ProjectB)
+foreach(p ProjectA ProjectB)
   message("-----------------------------------------------------------------------------")
 
-  set(expected_${_p}_ALL_DEPENDS
-    ${_p}-LibA ${_p}-LibB ${_p}-LibC ${_p}-LibD ${_p}-LibE ${_p}-LibF ${_p}-LibG ${_p}-LibH)
+# |-<project>
+# | \-<project>-LibA [Optional]
+# | |-<project>-LibB
+# | | \-<project>-LibC
+# | | |-<project>-LibD
+# | | | \-<project>-LibE
+# | | | \-<project>-LibF
+# | |-<project>-LibG
+# | | \-<project>-LibE
+# | |-<project>-LibH
+# | | |-<project>-LibD
+# | | | \-<project>-LibE
+# | | | \-<project>-LibF
 
-  set(optional_${_p}_project ${_p}-LibA)
-  set(expected_${_p}_REQUIRED_DEPENDS ${_p}-LibB ${_p}-LibG ${_p}-LibH)
-  set(expected_${_p}_DEPENDS ${optional_${_p}_project})
-  list(APPEND  expected_${_p}_DEPENDS ${expected_${_p}_REQUIRED_DEPENDS})
-  set(expected_${_p}_LibA_DEPENDS "")
-  set(expected_${_p}_LibB_DEPENDS ${_p}-LibC ${_p}-LibD)
-  set(expected_${_p}_LibC_DEPENDS "")
-  set(expected_${_p}_LibD_DEPENDS ${_p}-LibE ${_p}-LibF)
-  set(expected_${_p}_LibE_DEPENDS "")
-  set(expected_${_p}_LibF_DEPENDS "")
-  set(expected_${_p}_LibG_DEPENDS ${_p}-LibE)
-  set(expected_${_p}_LibH_DEPENDS ${_p}-LibD)
+  set(expected_${p}_ALL_DEPENDS
+    ${p}-LibA ${p}-LibB ${p}-LibC ${p}-LibD ${p}-LibE ${p}-LibF ${p}-LibG ${p}-LibH)
 
-  configure_external_projects_for_test("${expected_${_p}_ALL_DEPENDS}")
+  set(optional_${p}_DEPENDS ${p}-LibA)
 
-  set(${_p}_DEPENDS ${expected_${_p}_DEPENDS})
+  foreach(dep ${optional_${p}_DEPENDS})
+    set(optional_${dep} 1)
+  endforeach()
+
+  set(expected_${p}_REQUIRED_DEPENDS ${p}-LibB ${p}-LibG ${p}-LibH)
+  list(APPEND expected_${p}_DEPENDS ${optional_${p}_DEPENDS})
+  list(APPEND expected_${p}_DEPENDS ${expected_${p}_REQUIRED_DEPENDS})
+  set(expected_${p}-LibA_DEPENDS "")
+  set(expected_${p}-LibB_DEPENDS ${p}-LibC ${p}-LibD)
+  set(expected_${p}-LibC_DEPENDS "")
+  set(expected_${p}-LibD_DEPENDS ${p}-LibE ${p}-LibF)
+  set(expected_${p}-LibE_DEPENDS "")
+  set(expected_${p}-LibF_DEPENDS "")
+  set(expected_${p}-LibG_DEPENDS ${p}-LibE)
+  set(expected_${p}-LibH_DEPENDS ${p}-LibD)
+
+  configure_external_projects_for_test(${p})
 
   macro(superbuild_is_external_project_includable possible_proj output_var)
     set(${output_var} 1)
-    if(${possible_proj} STREQUAL "${optional_${_p}_project}")
+    if(optional_${possible_proj})
       set(${output_var} 0)
     endif()
   endmacro()
 
-  set(proj ${_p})
+  set(${p}_DEPENDS ${expected_${p}_DEPENDS})
+
+  set(proj ${p})
   ExternalProject_Include_Dependencies(${proj}
     SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS
     )
@@ -58,34 +77,34 @@ foreach(_p ProjectA ProjectB)
     endif()
   endforeach()
 
-  check_variable(${_p}_DEPENDS "${expected_${_p}_REQUIRED_DEPENDS}")
+  check_variable(${p}_DEPENDS "${expected_${p}_REQUIRED_DEPENDS}")
 
   # Check properties internally set by ExternalProject_Include_Dependencies
-  foreach(dep ${expected_${_p}_ALL_DEPENDS})
+  foreach(dep ${expected_${p}_ALL_DEPENDS})
     get_property(prop_SB_${dep}_DEPENDS GLOBAL PROPERTY SB_${dep}_DEPENDS)
     check_variable(prop_SB_${dep}_DEPENDS "${expected_${dep}_DEPENDS}")
   endforeach()
-  get_property(prop_SB_${_p}_DEPENDS GLOBAL PROPERTY SB_${_p}_DEPENDS)
-  check_variable(prop_SB_${_p}_DEPENDS "${expected_${_p}_REQUIRED_DEPENDS}")
+  get_property(prop_SB_${p}_DEPENDS GLOBAL PROPERTY SB_${p}_DEPENDS)
+  check_variable(prop_SB_${p}_DEPENDS "${expected_${p}_REQUIRED_DEPENDS}")
 
 endforeach()
 
 #-----------------------------------------------------------------------------
 if(BUILD_EXTERNAL_PROJECTS)
 
-  foreach(_p ProjectA ProjectB)
-    ExternalProject_Add(${_p}
-      ${${_p}_EP_ARGS}
+  foreach(p ProjectA ProjectB)
+    ExternalProject_Add(${p}
+      ${${p}_EP_ARGS}
       DOWNLOAD_COMMAND ""
       CMAKE_CACHE_ARGS
         -DBUILD_EXTERNAL_PROJECTS:BOOL=OFF
-        -DINNER_PROJECT_NAME:STRING=${_p}
+        -DINNER_PROJECT_NAME:STRING=${p}
       SOURCE_DIR ${${PROJECT_NAME}_SOURCE_DIR}
-      BINARY_DIR ${${PROJECT_NAME}_BINARY_DIR}/${_p}-build
+      BINARY_DIR ${${PROJECT_NAME}_BINARY_DIR}/${p}-build
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
-        ${${_p}_DEPENDS}
+        ${${p}_DEPENDS}
       )
   endforeach()
 
