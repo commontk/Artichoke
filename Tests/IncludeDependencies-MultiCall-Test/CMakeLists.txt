@@ -2,22 +2,33 @@ cmake_minimum_required(VERSION 2.8.7)
 
 project(IncludeDependencies-MultiCall-Test NONE)
 
+#-----------------------------------------------------------------------------
+option(BUILD_EXTERNAL_PROJECTS "Build ${PROJECT_NAME} and the projects it depends on." ON)
+
+#-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ${CMAKE_MODULE_PATH})
-set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals)
-file(REMOVE_RECURSE ${EXTERNAL_PROJECT_DIR})
-file(MAKE_DIRECTORY ${EXTERNAL_PROJECT_DIR})
+if(BUILD_EXTERNAL_PROJECTS)
+  set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_BINARY_DIR}/Externals)
+  file(REMOVE_RECURSE ${EXTERNAL_PROJECT_DIR})
+  file(MAKE_DIRECTORY ${EXTERNAL_PROJECT_DIR})
+else()
+  set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../Externals)
+endif()
 
 include(ExternalProject)
 include(Artichoke)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
-
-option(BUILD_EXTERNAL_PROJECTS "Build ${PROJECT_NAME} and the projects it depends on." ON)
+if(BUILD_EXTERNAL_PROJECTS)
+  set(projects ProjectA ProjectB)
+else()
+  set(projects ${INNER_PROJECT_NAME})
+endif()
 
 
 #-----------------------------------------------------------------------------
-foreach(p ProjectA ProjectB)
+foreach(p ${projects})
   message("-----------------------------------------------------------------------------")
 
 # |-<p>
@@ -75,7 +86,9 @@ foreach(p ProjectA ProjectB)
 
   endforeach()
 
-  configure_external_projects_for_test(${p})
+  if(BUILD_EXTERNAL_PROJECTS)
+    configure_external_projects_for_test(${p})
+  endif()
 
   macro(superbuild_is_external_project_includable possible_proj output_var)
     set(${output_var} 1)
