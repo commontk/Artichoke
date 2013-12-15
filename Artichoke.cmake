@@ -594,35 +594,37 @@ macro(ExternalProject_Include_Dependencies project_name)
   if(_sb_USE_SYSTEM)
     set(_include_type " (SYSTEM)")
   endif()
-  superbuild_message(${_sb_proj} "${_sb_proj}[OK]${_include_type}" SB_SECOND_PASS AND ${_sb_SB_VAR})
+  get_property(_optional GLOBAL PROPERTY SB_${_sb_proj}_OPTIONAL)
+  superbuild_message(${_sb_proj} "${_sb_proj}[OK]${_include_type}" SB_SECOND_PASS AND ${_sb_SB_VAR} AND NOT _optional)
 
   if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SB_FIRST_PASS)
     set(SB_FIRST_PASS FALSE)
     superbuild_message(${_sb_proj} "First pass - done")
 
-    foreach(possible_proj ${SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDS})
-      get_property(_optional GLOBAL PROPERTY SB_${possible_proj}_OPTIONAL)
-      if(_optional)
-        superbuild_message(${_sb_proj} "${possible_proj}[OPTIONAL]" ${_sb_SB_VAR})
-      endif()
-      set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
-    endforeach()
+    if(${_sb_SB_VAR})
+      foreach(possible_proj ${SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDS})
+        get_property(_optional GLOBAL PROPERTY SB_${possible_proj}_OPTIONAL)
+        if(_optional)
+          superbuild_message(${_sb_proj} "${possible_proj}[OPTIONAL]")
+        endif()
+        set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
+      endforeach()
 
-    set(${_sb_PROJECT_VAR} ${_sb_proj})
+      set(${_sb_PROJECT_VAR} ${_sb_proj})
 
-    set(SB_SECOND_PASS TRUE)
-    ExternalProject_Include_Dependencies(${_sb_proj}
-      PROJECT_VAR ${_sb_PROJECT_VAR}
-      DEPENDS_VAR ${_sb_DEPENDS_VAR}
-      EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
-      USE_SYSTEM_VAR _sb_USE_SYSTEM
-      SUPERBUILD_VAR ${_sb_SB_VAR}
-      )
-    set(SB_SECOND_PASS FALSE)
-
+      set(SB_SECOND_PASS TRUE)
+      ExternalProject_Include_Dependencies(${_sb_proj}
+        PROJECT_VAR ${_sb_PROJECT_VAR}
+        DEPENDS_VAR ${_sb_DEPENDS_VAR}
+        EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
+        USE_SYSTEM_VAR _sb_USE_SYSTEM
+        SUPERBUILD_VAR ${_sb_SB_VAR}
+        )
+      set(SB_SECOND_PASS FALSE)
+    endif()
   endif()
 
-  if(SB_FIRST_PASS OR NOT ${_sb_SB_VAR})
+  if(SB_FIRST_PASS OR _optional)
     if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
       return()
     endif()

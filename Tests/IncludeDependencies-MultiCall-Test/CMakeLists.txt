@@ -67,9 +67,11 @@ foreach(p ${projects})
     # Set expected_<dep>_DEPENDS variable
     set(expected_${dep}_DEPENDS ${expected_${dep}_OPTIONAL_DEPENDS} ${expected_${dep}_REQUIRED_DEPENDS})
 
-    # Set optional_<dep> variable
+    # Set (optional_|required_)<dep> variables
+    set(required_${dep} 1)
     foreach(opt ${expected_${dep}_OPTIONAL_DEPENDS})
       set(optional_${opt} 1)
+      set(required_${opt})
     endforeach()
 
   endforeach()
@@ -105,6 +107,10 @@ foreach(p ${projects})
     SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS
     )
 
+  if(BUILD_EXTERNAL_PROJECTS)
+    set(${p}_EP_ADDED 1)
+  endif()
+
   foreach(varname SB_FIRST_PASS SB_SECOND_PASS _sb_SB_VAR)
     if(DEFINED ${varname})
       message(FATAL_ERROR "${varname} should NOT be defined !")
@@ -125,6 +131,10 @@ foreach(p ${projects})
 
     get_property(prop_SB_${dep}_REQUIRED_DEPENDS GLOBAL PROPERTY SB_${dep}_REQUIRED_DEPENDS)
     check_variable(prop_SB_${dep}_REQUIRED_DEPENDS "${expected_${dep}_REQUIRED_DEPENDS}")
+
+    if(BUILD_EXTERNAL_PROJECTS)
+      check_variable(${dep}_EP_ADDED "${required_${dep}}")
+    endif()
   endforeach()
 
 endforeach()

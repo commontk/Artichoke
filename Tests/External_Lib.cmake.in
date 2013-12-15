@@ -43,6 +43,8 @@ else()
   ExternalProject_Add_Empty(${proj} DEPENDS "${depends}")
 endif()
 
+set(@PROJECT_NAME_CONFIG@_EP_ADDED 1)
+
 mark_as_superbuild(
   VARS @PROJECT_NAME_CONFIG@_DIR:PATH
   LABELS "FIND_PACKAGE"
