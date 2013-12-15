@@ -26,12 +26,14 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 # | |-DepTest-LibB
 # | | \-DepTest-LibC
 # | | |-DepTest-LibD
+# | | | \-DepTest-LibA [Optional]
 # | | | \-DepTest-LibE
 # | | | \-DepTest-LibF
 # | |-DepTest-LibG
 # | | \-DepTest-LibE
 # | |-DepTest-LibH
 # | | |-DepTest-LibD
+# | | | \-DepTest-LibA [Optional]
 # | | | \-DepTest-LibE
 # | | | \-DepTest-LibF
 
@@ -39,23 +41,31 @@ set(p DepTest) # Use a shorter project name
 
 set(expected_${p}_ALL_DEPENDS ${p}-LibA ${p}-LibB ${p}-LibC ${p}-LibD ${p}-LibE ${p}-LibF ${p}-LibG ${p}-LibH)
 
-set(optional_${p}_DEPENDS ${p}-LibA)
-
-foreach(dep ${optional_${p}_DEPENDS})
-  set(optional_${dep} 1)
-endforeach()
+set(expected_${p}_OPTIONAL_DEPENDS ${p}-LibA)
+set(expected_${p}-LibD_OPTIONAL_DEPENDS ${p}-LibA)
 
 set(expected_${p}_REQUIRED_DEPENDS ${p}-LibB ${p}-LibG ${p}-LibH)
-list(APPEND  expected_${p}_DEPENDS ${optional_${p}_DEPENDS})
-list(APPEND  expected_${p}_DEPENDS ${expected_${p}_REQUIRED_DEPENDS})
-set(expected_${p}-LibA_DEPENDS "")
-set(expected_${p}-LibB_DEPENDS ${p}-LibC ${p}-LibD)
-set(expected_${p}-LibC_DEPENDS "")
-set(expected_${p}-LibD_DEPENDS ${p}-LibE ${p}-LibF)
-set(expected_${p}-LibE_DEPENDS "")
-set(expected_${p}-LibF_DEPENDS "")
-set(expected_${p}-LibG_DEPENDS ${p}-LibE)
-set(expected_${p}-LibH_DEPENDS ${p}-LibD)
+set(expected_${p}-LibA_REQUIRED_DEPENDS "")
+set(expected_${p}-LibB_REQUIRED_DEPENDS ${p}-LibC ${p}-LibD)
+set(expected_${p}-LibC_REQUIRED_DEPENDS "")
+set(expected_${p}-LibD_REQUIRED_DEPENDS ${p}-LibE ${p}-LibF)
+set(expected_${p}-LibE_REQUIRED_DEPENDS "")
+set(expected_${p}-LibF_REQUIRED_DEPENDS "")
+set(expected_${p}-LibG_REQUIRED_DEPENDS ${p}-LibE)
+set(expected_${p}-LibH_REQUIRED_DEPENDS ${p}-LibD)
+
+foreach(dep ${p} ${expected_${p}_ALL_DEPENDS})
+
+  # Set expected_<dep>_DEPENDS variable
+  set(expected_${dep}_DEPENDS ${expected_${dep}_OPTIONAL_DEPENDS} ${expected_${dep}_REQUIRED_DEPENDS})
+
+  # Set optional_<dep> variable
+  foreach(opt ${expected_${dep}_OPTIONAL_DEPENDS})
+    set(optional_${opt} 1)
+  endforeach()
+
+endforeach()
+
 if(BUILD_EXTERNAL_PROJECTS)
   configure_external_projects_for_test(${p})
 endif()
@@ -76,15 +86,17 @@ ExternalProject_Include_Dependencies(${p}
   )
 
 #-----------------------------------------------------------------------------
+# Check that _DEPENDS variable has been updated
 check_variable(${p}_DEPENDS "${expected_${p}_REQUIRED_DEPENDS}")
 
 # Check properties internally set by ExternalProject_Include_Dependencies
-foreach(dep ${expected_${p}_ALL_DEPENDS})
+foreach(dep ${p} ${expected_${p}_ALL_DEPENDS})
   get_property(prop_SB_${dep}_DEPENDS GLOBAL PROPERTY SB_${dep}_DEPENDS)
   check_variable(prop_SB_${dep}_DEPENDS "${expected_${dep}_DEPENDS}")
+
+  get_property(prop_SB_${dep}_REQUIRED_DEPENDS GLOBAL PROPERTY SB_${dep}_REQUIRED_DEPENDS)
+  check_variable(prop_SB_${dep}_REQUIRED_DEPENDS "${expected_${dep}_REQUIRED_DEPENDS}")
 endforeach()
-get_property(prop_SB_${p}_DEPENDS GLOBAL PROPERTY SB_${p}_DEPENDS)
-check_variable(prop_SB_${p}_DEPENDS "${expected_${p}_REQUIRED_DEPENDS}")
 
 #-----------------------------------------------------------------------------
 if(BUILD_EXTERNAL_PROJECTS)

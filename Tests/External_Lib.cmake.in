@@ -14,7 +14,7 @@ ExternalProject_Include_Dependencies(${proj}
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 check_variable(proj "@PROJECT_NAME_CONFIG@")
-check_variable(depends "@PROJECT_DEPENDS_CONFIG@")
+check_variable(depends "@PROJECT_REQUIRED_DEPENDS_CONFIG@")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} "")
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})

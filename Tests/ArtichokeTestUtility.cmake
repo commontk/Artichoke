@@ -28,12 +28,12 @@ function(configure_external_projects_for_test name)
   endif()
   message("\# ${txt}")
 
-
   foreach(dep ${depends})
     set(_ep_file ${EXTERNAL_PROJECT_DIR}/External_${dep}.cmake)
     if(NOT EXISTS ${_ep_file})
       set(PROJECT_NAME_CONFIG ${dep})
       set(PROJECT_DEPENDS_CONFIG ${expected_${dep}_DEPENDS})
+      set(PROJECT_REQUIRED_DEPENDS_CONFIG ${expected_${dep}_REQUIRED_DEPENDS})
       configure_file(../External_Lib.cmake.in ${_ep_file} @ONLY)
     endif()
     configure_external_projects_for_test(${dep} ${indent})
