@@ -447,6 +447,14 @@ macro(ExternalProject_Include_Dependencies project_name)
   if(_sb_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "Invalid arguments: ${_sb_UNPARSED_ARGUMENTS}")
   endif()
+
+  # Set default for optional PROJECT_VAR parameter
+  if(NOT _sb_PROJECT_VAR)
+    set(_sb_PROJECT_VAR proj)
+    set(${_sb_PROJECT_VAR} ${project_name})
+    #message("[${project_name}] Setting _sb_PROJECT_VAR with default value '${_sb_PROJECT_VAR}'")
+  endif()
+
   if(_sb_PROJECT_VAR AND NOT x${project_name} STREQUAL x${${_sb_PROJECT_VAR}})
     message(FATAL_ERROR
       "Argument <project_name>:${project_name} and PROJECT_VAR:${_sb_PROJECT_VAR}:${${_sb_PROJECT_VAR}} are different !")
@@ -460,17 +468,11 @@ macro(ExternalProject_Include_Dependencies project_name)
     return()
   endif()
 
-  # Set default for optional PROJECT_VAR parameter
-  if(NOT _sb_PROJECT_VAR)
-    set(_sb_PROJECT_VAR proj)
-    #message("Setting _sb_PROJECT_VAR with default value '${_sb_PROJECT_VAR}'")
-  endif()
-
   # Set default for optional DEPENDS_VAR and EP_ARGS parameters
   foreach(param DEPENDS EP_ARGS)
     if(NOT _sb_${param}_VAR)
       set(_sb_${param}_VAR ${_sb_proj}_${param})
-      #message("Setting _sb_${param}_VAR with default value '${_sb_${param}_VAR}'")
+      #message("[${project_name}] Setting _sb_${param}_VAR with default value '${_sb_${param}_VAR}'")
     endif()
   endforeach()
 
@@ -483,19 +485,19 @@ macro(ExternalProject_Include_Dependencies project_name)
   # Set default for optional USE_SYSTEM_VAR parameter
   if(NOT _sb_USE_SYSTEM_VAR)
     set(_sb_USE_SYSTEM_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${_sb_proj})
-    #message("Setting _sb_USE_SYSTEM_VAR with default value '${_sb_USE_SYSTEM_VAR}'")
+    #message("[${project_name}] Setting _sb_USE_SYSTEM_VAR with default value '${_sb_USE_SYSTEM_VAR}'")
   endif()
 
   # Set default for optional SUPERBUILD_VAR parameter
   if(NOT _sb_SUPERBUILD_VAR)
     set(_sb_SUPERBUILD_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
-    #message("Setting _sb_SUPERBUILD_VAR with default value '${_sb_SUPERBUILD_VAR}'")
+    #message("[${project_name}] Setting _sb_SUPERBUILD_VAR with default value '${_sb_SUPERBUILD_VAR}'")
   endif()
 
   # Keeping track of variable name independently of the recursion
   if(NOT DEFINED _sb_SB_VAR)
     set(_sb_SB_VAR ${_sb_SUPERBUILD_VAR})
-    #message("Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
+    #message("[${project_name}] Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
   endif()
 
   # Set local variables
@@ -606,9 +608,11 @@ macro(ExternalProject_Include_Dependencies project_name)
       set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
     endforeach()
 
+    set(${_sb_PROJECT_VAR} ${_sb_proj})
+
     set(SB_SECOND_PASS TRUE)
     ExternalProject_Include_Dependencies(${_sb_proj}
-      PROJECT_VAR SUPERBUILD_TOPLEVEL_PROJECT
+      PROJECT_VAR ${_sb_PROJECT_VAR}
       DEPENDS_VAR ${_sb_DEPENDS_VAR}
       EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
       USE_SYSTEM_VAR _sb_USE_SYSTEM

@@ -85,7 +85,11 @@ ExternalProject_Include_Dependencies(${p}
   SUPERBUILD_VAR BUILD_EXTERNAL_PROJECTS
   )
 
+
 #-----------------------------------------------------------------------------
+
+check_variable(p "DepTest")
+
 # Check that _DEPENDS variable has been updated
 check_variable(${p}_DEPENDS "${expected_${p}_REQUIRED_DEPENDS}")
 

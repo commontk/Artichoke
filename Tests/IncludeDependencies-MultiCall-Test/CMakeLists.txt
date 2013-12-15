@@ -112,6 +112,9 @@ foreach(p ${projects})
   endforeach()
 
   #-----------------------------------------------------------------------------
+
+  check_variable(proj "${p}")
+
   # Check that _DEPENDS variable has been updated
   check_variable(${p}_DEPENDS "${expected_${p}_REQUIRED_DEPENDS}")
 
