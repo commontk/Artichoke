@@ -72,6 +72,7 @@ Examples
 
 See [Slicer/SuperBuild/External_zlib.cmake@7c77269](https://github.com/Slicer/Slicer/blob/7c7726994f76266e5604a3a8eeb5fd28ed50a3bd/SuperBuild/External_zlib.cmake)
 
+Slicer and CTK configure output: https://gist.github.com/jcfr/7990506
 
 Usage
 -----
