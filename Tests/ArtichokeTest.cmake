@@ -7,12 +7,18 @@ include(Artichoke)
 #
 function(_sb_cmakevar_to_cmakearg_test)
   function(check_test_result id current_output expected_output
+      current_has_cfg_intdir expected_has_cfg_intdir
       current_varname expected_varname
       current_vartype expected_vartype)
     if(NOT "${current_output}" STREQUAL "${expected_output}")
       message(FATAL_ERROR "Problem with _sb_cmakevar_to_cmakearg() - See testcase: ${id}\n"
                           "current_output:${current_output}\n"
                           "expected_output:${expected_output}")
+    endif()
+    if(NOT "${current_has_cfg_intdir}" STREQUAL "${expected_has_cfg_intdir}")
+      message(FATAL_ERROR "Problem with _sb_cmakevar_to_cmakearg() - See testcase: ${id}\n"
+                          "current_has_cfg_intdir:${current_has_cfg_intdir}\n"
+                          "expected_has_cfg_intdir:${expected_has_cfg_intdir}")
     endif()
     if(NOT "${current_varname}" STREQUAL "${expected_varname}")
       message(FATAL_ERROR "Problem with _sb_cmakevar_to_cmakearg() - See testcase: ${id}\n"
@@ -40,11 +46,13 @@ function(_sb_cmakevar_to_cmakearg_test)
   set(case${id}_expected_varname "")
   set(case${id}_expected_vartype "")
   set(case${id}_expected_cmake_arg_var "-Dcase${id}_input:STRING=${case${id}_input}")
+  set(case${id}_expected_has_cfg_intdir_var FALSE)
   _sb_cmakevar_to_cmakearg("case${id}_input:STRING"
-      case${id}_cmake_arg_var CMAKE_CACHE
+      case${id}_cmake_arg_var case${id}_has_cfg_intdir_var
       )
   check_test_result(${id}
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
+      "${case${id}_has_cfg_intdir_var}" "${case${id}_expected_has_cfg_intdir_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
   check_variable(${id} case${id}_input "Hello")
@@ -54,11 +62,13 @@ function(_sb_cmakevar_to_cmakearg_test)
   set(case${id}_expected_varname "case${id}_input")
   set(case${id}_expected_vartype "STRING")
   set(case${id}_expected_cmake_arg_var "-Dcase${id}_input:STRING=${case${id}_input}")
+  set(case${id}_expected_has_cfg_intdir_var FALSE)
   _sb_cmakevar_to_cmakearg("case${id}_input:STRING"
-      case${id}_cmake_arg_var CMAKE_CACHE
+      case${id}_cmake_arg_var case${id}_has_cfg_intdir_var
       case${id}_varname case${id}_vartype)
   check_test_result(${id}
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
+      "${case${id}_has_cfg_intdir_var}" "${case${id}_expected_has_cfg_intdir_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
   check_variable(${id} case${id}_input "Hello")
@@ -68,28 +78,46 @@ function(_sb_cmakevar_to_cmakearg_test)
   set(case${id}_expected_varname "case${id}_input")
   set(case${id}_expected_vartype "STRING")
   set(case${id}_expected_cmake_arg_var "-Dcase${id}_input:STRING=${case${id}_input}")
+  set(case${id}_expected_has_cfg_intdir_var FALSE)
   _sb_cmakevar_to_cmakearg("case${id}_input:STRING"
-      case${id}_cmake_arg_var CMAKE_CACHE
+      case${id}_cmake_arg_var case${id}_has_cfg_intdir_var
       case${id}_varname case${id}_vartype)
   check_test_result(${id}
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
+      "${case${id}_has_cfg_intdir_var}" "${case${id}_expected_has_cfg_intdir_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
   check_variable(${id} case${id}_input "Hello;World")
 
+  # Initialize case 4
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_CONFIGURATION_TYPES Release Debug)
+    set(SAVED_CMAKE_CFG_INTDIR ${CMAKE_CFG_INTDIR})
+    set(CMAKE_CFG_INTDIR "$(OutDir)")
+  endif()
+
   set(id 4)
-  set(case${id}_input Hello World)
+  set(case${id}_input Hello ${CMAKE_CFG_INTDIR})
   set(case${id}_expected_varname "case${id}_input")
   set(case${id}_expected_vartype "STRING")
-  set(case${id}_expected_cmake_arg_var "-Dcase${id}_input:STRING=Hello^^World")
+  set(case${id}_expected_cmake_arg_var "-Dcase${id}_input:STRING=Hello^^${CMAKE_CFG_INTDIR}")
+  set(case${id}_expected_has_cfg_intdir_var TRUE)
   _sb_cmakevar_to_cmakearg("case${id}_input:STRING"
-      case${id}_cmake_arg_var CMAKE_CMD
+      case${id}_cmake_arg_var case${id}_has_cfg_intdir_var
       case${id}_varname case${id}_vartype)
   check_test_result(${id}
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
+      "${case${id}_has_cfg_intdir_var}" "${case${id}_expected_has_cfg_intdir_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
-  check_variable(${id} case${id}_input "Hello;World")
+  check_variable(${id} case${id}_input "Hello;${CMAKE_CFG_INTDIR}")
+
+  # Finalize case 4
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR})
+    unset(SAVED_CMAKE_CFG_INTDIR)
+    unset(CMAKE_CONFIGURATION_TYPES)
+  endif()
 
   message("SUCCESS")
 endfunction()

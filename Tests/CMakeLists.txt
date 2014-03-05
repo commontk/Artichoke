@@ -44,6 +44,7 @@ macro(add_project_test name label)
       --build-and-test
       "${tests_source_dir}/${_dir}"
       "${tests_binary_dir}/${_dir}"
+      --build-config Release
       ${build_generator_args}
       --build-project ${project}
       --build-exe-dir "${tests_binary_dir}/${_dir}"
@@ -57,7 +58,6 @@ macro(add_project_test name label)
         LABELS "CMake;${label}"
       )
 endmacro()
-
 
 #
 # Add 'CMake script' Tests

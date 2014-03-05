@@ -27,7 +27,6 @@ API
 #!     VARS <varname1>[:<vartype1>] [<varname2>[:<vartype2>] [...]]
 #!     [PROJECTS <projectname> [<projectname> [...]] | ALL_PROJECTS]
 #!     [LABELS <label1> [<label2> [...]]]
-#!     [CMAKE_CMD]
 #!   )
 #!
 #! PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
