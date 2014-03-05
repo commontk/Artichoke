@@ -27,6 +27,9 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(FOO_VAR_WITH_LABELS "FooVarWithLabels")
   mark_as_superbuild(VARS FOO_VAR_WITH_LABELS LABELS "LABEL_A" "LABEL_B")
 
+  set(OTHER_FOO_VAR_WITH_LABELS "OtherFooVarWithLabels")
+  mark_as_superbuild(VARS OTHER_FOO_VAR_WITH_LABELS LABELS "LABEL_A" "LABEL_B")
+
   set(BAR_VAR_WITH_LABELS "BarVarWithLabels")
   mark_as_superbuild(VARS BAR_VAR_WITH_LABELS LABELS "LABEL_B")
 
@@ -83,10 +86,11 @@ check_variable(FOO_VAR "FooVar")
 check_variable(FOO_LIST "Item1;Item2")
 check_variable(FOO_LIST_FOR_CMAKE_CMD "Item1;Item2")
 check_variable(FOO_VAR_WITH_LABELS "FooVarWithLabels")
+check_variable(OTHER_FOO_VAR_WITH_LABELS "OtherFooVarWithLabels")
 check_variable(BAR_VAR_WITH_LABELS "BarVarWithLabels")
 
-check_variable(MarkAsSuperBuild-Test_EP_LABEL_LABEL_A "FOO_VAR_WITH_LABELS")
-check_variable(MarkAsSuperBuild-Test_EP_LABEL_LABEL_B "FOO_VAR_WITH_LABELS;BAR_VAR_WITH_LABELS")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_LABEL_A "FOO_VAR_WITH_LABELS;OTHER_FOO_VAR_WITH_LABELS")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_LABEL_B "FOO_VAR_WITH_LABELS;OTHER_FOO_VAR_WITH_LABELS;BAR_VAR_WITH_LABELS")
 
 check_variable(MarkAsSuperBuild-Test_EP_LABEL_FIND_PACKAGE "LibA_DIR;LibB_DIR;LibF_DIR;LibG_DIR;LibE_DIR")
 
