@@ -135,6 +135,8 @@ class _cmake_index_entry:
 
 _cmake_index_objs = {
     'command':    _cmake_index_entry('command'),
+    'function':   _cmake_index_entry('function'),
+    'macro':      _cmake_index_entry('macro'),
     'generator':  _cmake_index_entry('generator'),
     'manual':     _cmake_index_entry('manual'),
     'module':     _cmake_index_entry('module'),
@@ -242,7 +244,7 @@ class CMakeXRefRole(XRefRole):
         #  `command_name(SUB_COMMAND)`
         # to have an explicit target:
         #  `command_name(SUB_COMMAND) <command_name>`
-        if typ == 'cmake:command':
+        if typ == 'cmake:command' or typ == 'cmake:function' or typ == 'cmake:macro':
             m = CMakeXRefRole._re_sub.match(text)
             if m:
                 text = '%s <%s>' % (text, m.group(1))
@@ -262,6 +264,8 @@ class CMakeDomain(Domain):
     label = 'CMake'
     object_types = {
         'command':    ObjType('command',    'command'),
+        'function':   ObjType('function',   'function'),
+        'macro':      ObjType('macro',      'macro'),
         'generator':  ObjType('generator',  'generator'),
         'variable':   ObjType('variable',   'variable'),
         'module':     ObjType('module',     'module'),
@@ -276,6 +280,8 @@ class CMakeDomain(Domain):
     }
     directives = {
         'command':    CMakeObject,
+        'function':   CMakeObject,
+        'macro':      CMakeObject,
         'variable':   CMakeObject,
         # Other object types cannot be created except by the CMakeTransform
         # 'generator':  CMakeObject,
@@ -291,6 +297,8 @@ class CMakeDomain(Domain):
     }
     roles = {
         'command':    CMakeXRefRole(fix_parens = True, lowercase = True),
+        'function':   CMakeXRefRole(fix_parens = True, lowercase = True),
+        'macro':      CMakeXRefRole(fix_parens = True, lowercase = True),
         'generator':  CMakeXRefRole(),
         'variable':   CMakeXRefRole(),
         'module':     CMakeXRefRole(),
