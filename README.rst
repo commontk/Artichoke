@@ -49,9 +49,4 @@ Test
   cmake ../Artichoke/Tests
   ctest
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
 
