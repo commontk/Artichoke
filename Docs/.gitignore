@@ -1,0 +1,5 @@
+# sphinx build folder
+build
+
+# sphinx extensions
+*.pyc
