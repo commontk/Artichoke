@@ -3,6 +3,13 @@
 Welcome to Artichoke's documentation!
 =====================================
 
+
+.. image:: https://readthedocs.org/projects/cmake-artichoke/badge/?version=latest
+    :alt: status
+    :scale: 100%
+    :target: https://readthedocs.org/builds/cmake-artichoke/
+
+
 You will find here a `CMake <http://cmake.org/>`_ module allowing to easily create a build system on top of `ExternalProject <http://www.cmake.org/cmake/help/git-master/module/ExternalProject.html>`_ module.
 
 
