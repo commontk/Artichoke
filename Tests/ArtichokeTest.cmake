@@ -1,6 +1,6 @@
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../ ${CMAKE_MODULE_PATH})
-include(Artichoke)
+include(ExternalProjectDependency)
 
 #
 # cmake -DTEST__sb_cmakevar_to_cmakearg_test:BOOL=ON -P ArtichokeTest.cmake

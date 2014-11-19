@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ${CMAKE_MODULE_PATH})
 set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TheExternals)
 set(EXTERNAL_PROJECT_FILE_PREFIX "TheExternal_")
 include(ExternalProject)
-include(Artichoke)
+include(ExternalProjectDependency)
 
 project(MarkAsSuperBuild-Test NONE)
 

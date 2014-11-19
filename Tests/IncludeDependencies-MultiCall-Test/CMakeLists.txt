@@ -16,7 +16,7 @@ else()
 endif()
 
 include(ExternalProject)
-include(Artichoke)
+include(ExternalProjectDependency)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
