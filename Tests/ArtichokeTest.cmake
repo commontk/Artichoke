@@ -1,4 +1,8 @@
 
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 OLD)
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../ ${CMAKE_MODULE_PATH})
 include(ExternalProjectDependency)
 

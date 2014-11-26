@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.7)
 
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 OLD)
+endif()
+
 get_filename_component(_project_name ${CMAKE_BINARY_DIR} NAME_WE)
 string(REPLACE "-build" "" _project_name ${_project_name})
 

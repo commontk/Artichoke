@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.7)
 
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 OLD)
+endif()
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ${CMAKE_MODULE_PATH})
 set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TheExternals)
 set(EXTERNAL_PROJECT_FILE_PREFIX "TheExternal_")
