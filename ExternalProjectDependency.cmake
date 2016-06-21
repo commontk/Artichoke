@@ -332,7 +332,7 @@ function(_sb_get_external_project_arguments proj varname)
 
   list(APPEND _ep_arguments LIST_SEPARATOR ${EP_LIST_SEPARATOR})
 
-  list(APPEND _ep_arguments CMAKE_GENERATOR ${EP_CMAKE_GENERATOR})
+  list(APPEND _ep_arguments CMAKE_GENERATOR ${_sb_CMAKE_GENERATOR})
 
   set(${varname} ${_ep_arguments} PARENT_SCOPE)
 endfunction()
@@ -447,11 +447,12 @@ endfunction()
 #      [DEPENDS_VAR <depends_var>]
 #      [USE_SYSTEM_VAR <use_system_var>]
 #      [SUPERBUILD_VAR <superbuild_var>]
+#      [CMAKE_GENERATOR <cmake_generator>]
 #    )
 #
 macro(ExternalProject_Include_Dependencies project_name)
   set(options)
-  set(oneValueArgs PROJECT_VAR DEPENDS_VAR EP_ARGS_VAR USE_SYSTEM_VAR SUPERBUILD_VAR)
+  set(oneValueArgs PROJECT_VAR DEPENDS_VAR EP_ARGS_VAR USE_SYSTEM_VAR SUPERBUILD_VAR CMAKE_GENERATOR)
   set(multiValueArgs)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -461,6 +462,7 @@ macro(ExternalProject_Include_Dependencies project_name)
       OR x${project_name} STREQUAL xDEPENDS_VAR
       OR x${project_name} STREQUAL xUSE_SYSTEM_VAR
       OR x${project_name} STREQUAL xSUPERBUILD_VAR
+      OR x${project_name} STREQUAL xCMAKE_GENERATOR
       )
     message(FATAL_ERROR "Argument <project_name> is missing !")
   endif()
@@ -512,6 +514,14 @@ macro(ExternalProject_Include_Dependencies project_name)
   if(NOT _sb_SUPERBUILD_VAR)
     set(_sb_SUPERBUILD_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
     #message("[${project_name}] Setting _sb_SUPERBUILD_VAR with default value '${_sb_SUPERBUILD_VAR}'")
+  endif()
+
+  # Set default for optional CMAKE_GENERATOR parameter
+  if(NOT _sb_CMAKE_GENERATOR)
+    set(_sb_CMAKE_GENERATOR ${EP_CMAKE_GENERATOR})
+    message("[${project_name}] Setting _sb_CMAKE_GENERATOR with default value '${_sb_CMAKE_GENERATOR}'")
+  else()
+    message("[${project_name}] Setting _sb_CMAKE_GENERATOR to value '${_sb_CMAKE_GENERATOR}'")
   endif()
 
   # Keeping track of variable name independently of the recursion
@@ -581,6 +591,7 @@ macro(ExternalProject_Include_Dependencies project_name)
   set_property(GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM       ${_sb_USE_SYSTEM})
   set_property(GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM_VAR   ${_sb_USE_SYSTEM_VAR})
   set_property(GLOBAL PROPERTY SB_${_sb_proj}_PROJECT_VAR      ${_sb_PROJECT_VAR})
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_CMAKE_GENERATOR  ${_sb_CMAKE_GENERATOR})
   superbuild_stack_push(SB_PROJECT_STACK ${_sb_proj})
 
   # Include dependencies
@@ -603,6 +614,7 @@ macro(ExternalProject_Include_Dependencies project_name)
 
   # Restore variables
   superbuild_stack_pop(SB_PROJECT_STACK _sb_proj)
+  get_property(_sb_CMAKE_GENERATOR  GLOBAL PROPERTY SB_${_sb_proj}_CMAKE_GENERATOR)
   get_property(_sb_PROJECT_VAR      GLOBAL PROPERTY SB_${_sb_proj}_PROJECT_VAR)
   get_property(_sb_USE_SYSTEM_VAR   GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM_VAR)
   get_property(_sb_USE_SYSTEM       GLOBAL PROPERTY SB_${_sb_proj}_USE_SYSTEM)
@@ -641,6 +653,7 @@ macro(ExternalProject_Include_Dependencies project_name)
         EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
         USE_SYSTEM_VAR _sb_USE_SYSTEM
         SUPERBUILD_VAR ${_sb_SB_VAR}
+        CMAKE_GENERATOR ${_sb_CMAKE_GENERATOR}
         )
       set(SB_SECOND_PASS FALSE)
     endif()
