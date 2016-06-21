@@ -217,6 +217,10 @@ function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var has_cfg_i
     endif()
   endif()
 
+  if(NOT _has_cfg_intdir)
+    string(REPLACE "\"" "\\\"" _var_value "${_var_value}")
+  endif()
+
   set(${cmake_arg_var} -D${_varname}:${_vartype}=${_var_value} PARENT_SCOPE)
   set(${has_cfg_intdir_var} ${_has_cfg_intdir} PARENT_SCOPE)
 

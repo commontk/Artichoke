@@ -31,6 +31,12 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(FOO_VAR "FooVar")
   mark_as_superbuild(FOO_VAR)
 
+  set(FOO_VAR_WITH_QUOTES "This is \"FooVar\" with quotes")
+  mark_as_superbuild(FOO_VAR_WITH_QUOTES)
+
+  set(FOO_VAR_FOR_CMAKE_ARGS_WITH_QUOTES "This is \"FooVar\" with quotes for \"${CMAKE_CFG_INTDIR}\"")
+  mark_as_superbuild(FOO_VAR_FOR_CMAKE_ARGS_WITH_QUOTES)
+
   set(FOO_LIST Item1 Item2)
   mark_as_superbuild(FOO_LIST)
 
@@ -103,6 +109,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
 check_variable(FOO_OPTION "ON")
 check_variable(FOO_VAR "FooVar")
+check_variable(FOO_VAR_WITH_QUOTES "This is \"FooVar\" with quotes")
+check_variable(FOO_VAR_FOR_CMAKE_ARGS_WITH_QUOTES "This is \"FooVar\" with quotes for \"${EXPECTED_CMAKE_CFG_INTDIR}\"")
 check_variable(FOO_LIST "Item1;Item2")
 check_variable(FOO_LIST_FOR_CMAKE_ARGS "Item1;${EXPECTED_CMAKE_CFG_INTDIR}")
 check_variable(FOO_LIST_FOR_CMAKE_ARGS_WITH_CMAKE_CMD_IGNORED "Item1;${EXPECTED_CMAKE_CFG_INTDIR}")
