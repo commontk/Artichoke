@@ -22,6 +22,7 @@ macro(add_cmakescript_test name script)
 endmacro()
 
 set(CMAKE_TEST_GENERATOR "${CMAKE_GENERATOR}")
+set(CMAKE_TEST_GENERATOR_PLATFORM "${CMAKE_GENERATOR_PLATFORM}")
 set(CMAKE_TEST_GENERATOR_TOOLSET "${CMAKE_GENERATOR_TOOLSET}")
 set(CMAKE_TEST_MAKEPROGRAM "${CMAKE_MAKE_PROGRAM}")
 
@@ -29,6 +30,11 @@ set(build_generator_args
   --build-generator ${CMAKE_TEST_GENERATOR}
   --build-makeprogram ${CMAKE_TEST_MAKEPROGRAM}
   )
+if(CMAKE_TEST_GENERATOR_PLATFORM)
+  list(APPEND build_generator_args
+    --build-generator-platform ${CMAKE_TEST_GENERATOR_PLATFORM}
+    )
+endif()
 if(CMAKE_TEST_GENERATOR_TOOLSET)
   list(APPEND build_generator_args
     --build-generator-toolset ${CMAKE_TEST_GENERATOR_TOOLSET}
