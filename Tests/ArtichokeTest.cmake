@@ -245,3 +245,49 @@ endfunction()
 if(TEST__sb_list_to_string_test)
   _sb_list_to_string_test()
 endif()
+
+#
+# cmake -DTEST_ExternalProject_SetIfNotDefined_test:BOOL=ON -P ArtichokeTest.cmake
+#
+function(ExternalProject_SetIfNotDefined_test)
+  function(_check_string id current_output expected_output)
+    if(NOT "${current_output}" STREQUAL "${expected_output}")
+      message(FATAL_ERROR "Problem with ExternalProject_SetIfNotDefined() - See testcase: ${id}\n"
+                          "current_output:${current_output}\n"
+                          "expected_output:${expected_output}")
+    endif()
+  endfunction()
+
+  set(id 1)
+  ExternalProject_SetIfNotDefined(test${id} "value${id}")
+  _check_string(${id} "${test${id}}" "value${id}")
+
+  set(id 2)
+  set(test${id} "value${id}_already_set")
+  ExternalProject_SetIfNotDefined(test${id} "value${id}")
+  _check_string(${id} "${test${id}}" "value${id}_already_set")
+
+  set(id 3)
+  set(ENV{test${id}} "value${id}_already_set_from_env")
+  ExternalProject_SetIfNotDefined(test${id} "value${id}")
+  _check_string(${id} "${test${id}}" "value${id}_already_set_from_env")
+
+  set(id 4)
+  ExternalProject_SetIfNotDefined(test${id} "value${id}" OBFUSCATE)
+  _check_string(${id} "${test${id}}" "value${id}")
+
+  set(id 5)
+  set(test${id} "value${id}_already_set")
+  ExternalProject_SetIfNotDefined(test${id} "value${id}" OBFUSCATE)
+  _check_string(${id} "${test${id}}" "value${id}_already_set")
+
+  set(id 6)
+  set(ENV{test${id}} "value${id}_already_set_from_env")
+  ExternalProject_SetIfNotDefined(test${id} "value${id}" OBFUSCATE)
+  _check_string(${id} "${test${id}}" "value${id}_already_set_from_env")
+
+  message("SUCCESS")
+endfunction()
+if(TEST_ExternalProject_SetIfNotDefined_test)
+  ExternalProject_SetIfNotDefined_test()
+endif()
