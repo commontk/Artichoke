@@ -795,7 +795,7 @@ endfunction()
 #
 # .. code-block:: cmake
 #
-#  ExternalProject_SetIfNotDefined(<var> <defaultvalue> [OBFUSCATE])
+#  ExternalProject_SetIfNotDefined(<var> <defaultvalue> [OBFUSCATE] [QUIET])
 #
 # The default value is set with:
 #  (1) if set, the value environment variable <var>.
@@ -803,11 +803,16 @@ endfunction()
 #  (3) if none of the above, the value passed as a parameter.
 #
 # Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
+# Setting the optional parameter 'QUIET' will not display any message.
 macro(ExternalProject_SetIfNotDefined var defaultvalue)
   set(_obfuscate FALSE)
+  set(_quiet FALSE)
   foreach(arg ${ARGN})
     if(arg STREQUAL "OBFUSCATE")
       set(_obfuscate TRUE)
+    endif()
+    if(arg STREQUAL "QUIET")
+      set(_quiet TRUE)
     endif()
   endforeach()
   if(DEFINED ENV{${var}} AND NOT DEFINED ${var})
@@ -815,7 +820,9 @@ macro(ExternalProject_SetIfNotDefined var defaultvalue)
     if(_obfuscate)
       set(_value "OBFUSCATED")
     endif()
-    message(STATUS "Setting '${var}' variable with environment variable value '${_value}'")
+    if(NOT _quiet)
+      message(STATUS "Setting '${var}' variable with environment variable value '${_value}'")
+    endif()
     set(${var} $ENV{${var}})
   endif()
   if(NOT DEFINED ${var})
@@ -823,10 +830,9 @@ macro(ExternalProject_SetIfNotDefined var defaultvalue)
     if(_obfuscate)
       set(_value "OBFUSCATED")
     endif()
-    message(STATUS "Setting '${var}' variable with default value '${_value}'")
+    if(NOT _quiet)
+      message(STATUS "Setting '${var}' variable with default value '${_value}'")
+    endif()
     set(${var} "${defaultvalue}")
-  endif()
-  if(NOT _obfuscate)
-    list(APPEND variables ${var})
   endif()
 endmacro()

@@ -272,6 +272,9 @@ function(ExternalProject_SetIfNotDefined_test)
   ExternalProject_SetIfNotDefined(test${id} "value${id}")
   _check_string(${id} "${test${id}}" "value${id}_already_set_from_env")
 
+  #
+  # OBFUSCATE
+  #
   set(id 4)
   ExternalProject_SetIfNotDefined(test${id} "value${id}" OBFUSCATE)
   _check_string(${id} "${test${id}}" "value${id}")
@@ -284,6 +287,23 @@ function(ExternalProject_SetIfNotDefined_test)
   set(id 6)
   set(ENV{test${id}} "value${id}_already_set_from_env")
   ExternalProject_SetIfNotDefined(test${id} "value${id}" OBFUSCATE)
+  _check_string(${id} "${test${id}}" "value${id}_already_set_from_env")
+
+  #
+  # QUIET
+  #
+  set(id 4)
+  ExternalProject_SetIfNotDefined(test${id} "value${id}" QUIET)
+  _check_string(${id} "${test${id}}" "value${id}")
+
+  set(id 5)
+  set(test${id} "value${id}_already_set")
+  ExternalProject_SetIfNotDefined(test${id} "value${id}" QUIET)
+  _check_string(${id} "${test${id}}" "value${id}_already_set")
+
+  set(id 6)
+  set(ENV{test${id}} "value${id}_already_set_from_env")
+  ExternalProject_SetIfNotDefined(test${id} "value${id}" QUIET)
   _check_string(${id} "${test${id}}" "value${id}_already_set_from_env")
 
   message("SUCCESS")
