@@ -9,6 +9,11 @@ Welcome to Artichoke's documentation!
     :scale: 100%
     :target: https://readthedocs.org/builds/cmake-artichoke/
 
+.. image:: https://circleci.com/gh/commontk/Artichoke.svg?style=svg
+    :alt: status
+    :scale: 100%
+    :target: https://circleci.com/gh/commontk/Artichoke
+
 
 You will find here a `CMake <http://cmake.org/>`_ module allowing to easily create a build system on top of `ExternalProject <http://www.cmake.org/cmake/help/git-master/module/ExternalProject.html>`_ module.
 
