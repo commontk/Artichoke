@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    working_directory: /usr/src/Artichoke
+    docker:
+      - image: thewtex/centos-build:v1.0.0
+    steps:
+      - checkout
+      - run:
+          name: Configure and Test
+          command: |
+            mkdir /usr/src/Artichoke-Tests && cd $_
+            cmake ../Artichoke/Tests
+            ctest
+
