@@ -30,6 +30,8 @@ Features:
 
 * Experimental support for optional ExternalProject dependency based on inner project requirements
 
+* Support Ninja generator by default. If supported, USES_TERMINAL_* options are always passed to dependent projects.
+
 
 Contents:
 
