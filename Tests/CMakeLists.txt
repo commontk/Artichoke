@@ -82,6 +82,7 @@ add_cmakescript_test(_sb_extract_varname_and_vartype ArtichokeTest)
 add_cmakescript_test(ExternalProject_SetIfNotDefined ArtichokeTest)
 
 set(tests_source_dir ${CMAKE_SOURCE_DIR})
+add_project_test(AlwaysConfigure SuperBuild)
 add_project_test(MarkAsSuperBuild SuperBuild)
 add_project_test(IncludeDependencies-MultiCall SuperBuild)
 add_project_test(IncludeDependencies-DEPENDS SuperBuild)
