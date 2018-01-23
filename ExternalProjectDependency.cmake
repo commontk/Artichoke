@@ -357,6 +357,18 @@ function(_sb_get_external_project_arguments proj varname)
   _sb_collect_args(${_ALL_PROJECT_IDENTIFIER})
 
   set(_ep_arguments "")
+
+  # Automatically propagate CMake options
+  foreach(_cmake_option IN ITEMS
+    CMAKE_EXPORT_COMPILE_COMMANDS
+    )
+    if(DEFINED ${_cmake_option})
+      list(APPEND _ep_arguments CMAKE_CACHE_ARGS
+        -D${_cmake_option}:BOOL=${${_cmake_option}}
+        )
+    endif()
+  endforeach()
+
   foreach(property CMAKE_ARGS CMAKE_CACHE_ARGS)
     get_property(${proj}_EP_PROPERTY_${property} GLOBAL PROPERTY ${proj}_EP_PROPERTY_${property})
     get_property(${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property} GLOBAL PROPERTY ${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property})

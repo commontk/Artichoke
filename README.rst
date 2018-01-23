@@ -32,7 +32,10 @@ Features:
 
 * Well-formatted summary of the included ExternalProject. For example, see `here <https://gist.github.com/jcfr/7990506>`_
 
-* Support Ninja generator by default. If supported, ``USES_TERMINAL_*`` options are always passed to dependent projects.
+* Support Ninja generator by default.
+
+  * If supported, ``USES_TERMINAL_*`` options are always passed to dependent projects.
+  * ``CMAKE_EXPORT_COMPILE_COMMANDS`` variable is automatically propagated to all projects.
 
 * Experimental support for optional ExternalProject dependency based on inner project requirements.
 
