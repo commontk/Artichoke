@@ -1,6 +1,10 @@
 #.rst:
 # ExternalProjectDependency
 # -------------------------
+#
+# .. only:: html
+#
+#    .. contents::
 
 ###########################################################################
 #
@@ -29,18 +33,40 @@ if(NOT DEFINED EP_LIST_SEPARATOR)
 endif()
 
 #.rst:
+# Global Variables
+# ^^^^^^^^^^^^^^^^
+
+#.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_DIR
+#
+# This variable describes the directory in which external project files
+# matching ``<EXTERNAL_PROJECT_FILE_PREFIX><projectname>.cmake`` expression are globbed.
 #
 if(NOT EXISTS "${EXTERNAL_PROJECT_DIR}")
   set(EXTERNAL_PROJECT_DIR ${CMAKE_SOURCE_DIR}/SuperBuild)
 endif()
 
 #.rst:
+# .. cmake:variable:: EXTERNAL_PROJECT_ADDITIONAL_DIR
+#
+# If set, this variable represents an other directory in which external project files
+# are searched for if not already found in ``EXTERNAL_PROJECT_DIR``.
+
+#.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_FILE_PREFIX
+#
+# This variable describes the prefix of the external project files looked up in
+# ``EXTERNAL_PROJECT_DIR``. It defaults to ``External_``.
 #
 if(NOT DEFINED EXTERNAL_PROJECT_FILE_PREFIX)
   set(EXTERNAL_PROJECT_FILE_PREFIX "External_")
 endif()
+
+#.rst:
+# .. cmake:variable:: SUPERBUILD_TOPLEVEL_PROJECT
+#
+# This variable can be set to explicitly identify the name of the top-level project.
+# If not set, it default to the value of ``CMAKE_PROJECT_NAME``.
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
@@ -50,6 +76,10 @@ else()
 endif()
 set(EP_CMAKE_GENERATOR_PLATFORM "${CMAKE_GENERATOR_PLATFORM}")
 set(EP_CMAKE_GENERATOR_TOOLSET "${CMAKE_GENERATOR_TOOLSET}")
+
+#.rst:
+# Functions
+# ^^^^^^^^^
 
 #.rst:
 # .. cmake:function:: mark_as_superbuild
@@ -468,6 +498,33 @@ endfunction()
 #      [CMAKE_GENERATOR_PLATFORM <cmake_generator_platform>]
 #      [CMAKE_GENERATOR_TOOLSET <cmake_generator_toolset>]
 #    )
+#
+#
+# .. code-block:: cmake
+#
+#  PROJECT_VAR Name of the variable containing the name of the included project.
+#              By default, it is `proj` and it is set to `<project_name>`.
+#
+#  EP_ARGS_VAR Name of the variable listing arguments to pass to ExternalProject.
+#              If not specified, variable name default to `<project_name>_EP_ARGS`.
+#
+#  DEPENDS_VAR Name of the variable containing the dependency of the included project.
+#              By default, it is `<project_name>_DEPENDS`.
+#
+#
+#  USE_SYSTEM_VAR Name of the variable indicating if the system version of <project_name>
+#                 should be looked up. Lookup of the project is left to the developer implementing
+#                 the external project file.
+#                 By default, it is `<SUPERBUILD_TOPLEVEL_PROJECT>_USE_SYSTEM_<project_name>`.
+#
+#  SUPERBUILD_VAR Name of the variable indicating if the top-level or inner project is being built.
+#                 By default, it is `<SUPERBUILD_TOPLEVEL_PROJECT>_SUPERBUILD`.
+#
+#
+#  CMAKE_GENERATOR
+#  CMAKE_GENERATOR_PLATFORM
+#  CMAKE_GENERATOR_TOOLSET These three options allow to overwrite the values set in the top-level project that
+#                          would otherwise automatically be propagated to dependent projects.
 #
 macro(ExternalProject_Include_Dependencies project_name)
   set(options)
