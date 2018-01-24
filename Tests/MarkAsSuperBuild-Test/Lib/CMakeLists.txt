@@ -49,3 +49,16 @@ set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
 # mark_as_superbuild: Test use of ALL_PROJECTS with LABELS
 check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_ALLPROJECT "ALL_PROJECTS_VAR_WITH_LABELS")
 check_variable(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
+
+# ExternalProject_DeclareLabels tests
+check_variable_not_defined("MarkAsSuperBuild-Test_EP_LABEL_DECLARED_LABEL_NO_VAR_MAINPROJECT")
+
+if(PROJECT_NAME STREQUAL "LibA")
+  check_variable_defined("LibA_EP_LABEL_DECLARED_LABEL_NO_VAR_LibA")
+  check_variable(LibA_EP_LABEL_DECLARED_LABEL_NO_VAR_LibA "")
+else()
+  check_variable_not_defined("${PROJECT_NAME}_EP_LABEL_DECLARED_LABEL_NO_VAR_LibA")
+endif()
+
+check_variable_defined("${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_DECLARED_LABEL_NO_VAR_ALL_PROJECTS")
+check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_DECLARED_LABEL_NO_VAR_ALL_PROJECTS "")
