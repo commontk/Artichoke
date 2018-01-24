@@ -20,17 +20,24 @@ You will find here a `CMake <http://cmake.org/>`_ module allowing to easily crea
 
 Features:
 
-* Intuitive and easy way to "pass" CMake variables to any ExternalProject
+* Intuitive and easy way to "pass" CMake variables to any ExternalProject.
 
-* Receipe to write external project file for download, system or arbitrary location use
+* Recipe to write external project file that can be:
 
-* Intuitive handling of USE_SYSTEM option
+  * downloaded/configured/built/installed
+  * and/or found on system using ``find_package(<projectname> ...)`` calls
+  * and/or explicitly specified using ``-D<projectname>_DIR:PATH=...`` variables.
+
+* Intuitive handling of USE_SYSTEM options.
 
 * Well-formatted summary of the included ExternalProject. For example, see `here <https://gist.github.com/jcfr/7990506>`_
 
-* Experimental support for optional ExternalProject dependency based on inner project requirements
+* Support Ninja generator by default.
 
-* Support Ninja generator by default. If supported, USES_TERMINAL_* options are always passed to dependent projects.
+  * If supported, ``USES_TERMINAL_*`` options are always passed to dependent projects.
+  * ``CMAKE_EXPORT_COMPILE_COMMANDS`` variable is automatically propagated to all projects.
+
+* Experimental support for optional ExternalProject dependency based on inner project requirements.
 
 
 Contents:
