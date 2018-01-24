@@ -1,3 +1,16 @@
+
+function(check_variable_defined var_name)
+  if(NOT DEFINED "${var_name}")
+    message(FATAL_ERROR "CMake variable [${var_name}] should be defined !")
+  endif()
+endfunction()
+
+function(check_variable_not_defined var_name)
+  if(DEFINED "${var_name}")
+    message(FATAL_ERROR "CMake variable [${var_name}] should not be be defined ! Current value is [${${var_name}}]")
+  endif()
+endfunction()
+
 function(check_variable var_name expected_value)
   if(NOT "x${${var_name}}" STREQUAL "x${expected_value}")
     message(FATAL_ERROR "CMake variable [${var_name}] is incorrectly set !\n"

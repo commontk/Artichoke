@@ -46,6 +46,10 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(FOO_LIST_FOR_CMAKE_ARGS_WITH_CMAKE_CMD_IGNORED Item1 ${CMAKE_CFG_INTDIR})
   mark_as_superbuild(FOO_LIST_FOR_CMAKE_ARGS_WITH_CMAKE_CMD_IGNORED CMAKE_CMD)
 
+  # Check that declaring a label *before* using it with "mark_as_superbuild"
+  # does not have any side effect.
+  ExternalProject_DeclareLabels(LABELS "LABEL_A")
+
   set(FOO_VAR_WITH_LABELS "FooVarWithLabels")
   mark_as_superbuild(VARS FOO_VAR_WITH_LABELS LABELS "LABEL_A" "LABEL_B")
 
@@ -57,6 +61,10 @@ if(${PROJECT_NAME}_SUPERBUILD)
 
   set(BAR_VAR_WITH_LABELS "BarVarWithLabels")
   mark_as_superbuild(VARS BAR_VAR_WITH_LABELS LABELS "LABEL_B")
+
+  # Check that declaring a label *after* using it with "mark_as_superbuild"
+  # does not have any side effect.
+  ExternalProject_DeclareLabels(LABELS "LABEL_B")
 
   foreach(lib LibA LibB LibE)
     set(${lib}_VAR ${lib})
@@ -75,10 +83,15 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(ALL_PROJECTS_VAR "AllProjectsVar")
   mark_as_superbuild(VARS ALL_PROJECTS_VAR ALL_PROJECTS)
 
-  # XXX Add 'ALL_PROJECTS' test with labels
+  set(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
+  mark_as_superbuild(VARS ALL_PROJECTS_VAR_WITH_LABELS ALL_PROJECTS LABELS "ALLPROJECT")
 
   set(WITHCOLON_VAR "c:/path/to/something" CACHE PATH "Variable with colon")
   mark_as_superbuild(WITHCOLON_VAR)
+
+  ExternalProject_DeclareLabels(LABELS "DECLARED_LABEL_NO_VAR_MAINPROJECT")
+  ExternalProject_DeclareLabels(LABELS "DECLARED_LABEL_NO_VAR_LibA" PROJECTS LibA)
+  ExternalProject_DeclareLabels(ALL_PROJECTS LABELS "DECLARED_LABEL_NO_VAR_ALL_PROJECTS")
 
   # Since LibC depends on LibD, LibD will also be expected to be found on the system
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
@@ -140,6 +153,20 @@ check_variable(MULTIPROJECT_VAR "MultiProjectVar")
 check_variable(MarkAsSuperBuild-Test_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
 check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
 
+# mark_as_superbuild: Test use of ALL_PROJECTS
 check_variable(ALL_PROJECTS_VAR "AllProjectsVar")
 
+# mark_as_superbuild: Test use of ALL_PROJECTS with LABELS
+check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_ALLPROJECT "ALL_PROJECTS_VAR_WITH_LABELS")
+check_variable(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
+
 check_variable(WITHCOLON_VAR "c:/path/to/something")
+
+# ExternalProject_DeclareLabels tests
+check_variable_defined("MarkAsSuperBuild-Test_EP_LABEL_DECLARED_LABEL_NO_VAR_MAINPROJECT")
+check_variable(MarkAsSuperBuild-Test_EP_LABEL_DECLARED_LABEL_NO_VAR_MAINPROJECT "")
+
+check_variable_not_defined("MarkAsSuperBuild-Test_EP_LABEL_DECLARED_LABEL_NO_VAR_LibA")
+
+check_variable_defined("${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_DECLARED_LABEL_NO_VAR_ALL_PROJECTS")
+check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_DECLARED_LABEL_NO_VAR_ALL_PROJECTS "")
