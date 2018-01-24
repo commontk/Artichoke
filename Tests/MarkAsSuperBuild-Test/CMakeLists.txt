@@ -75,7 +75,8 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(ALL_PROJECTS_VAR "AllProjectsVar")
   mark_as_superbuild(VARS ALL_PROJECTS_VAR ALL_PROJECTS)
 
-  # XXX Add 'ALL_PROJECTS' test with labels
+  set(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
+  mark_as_superbuild(VARS ALL_PROJECTS_VAR_WITH_LABELS ALL_PROJECTS LABELS "ALLPROJECT")
 
   set(WITHCOLON_VAR "c:/path/to/something" CACHE PATH "Variable with colon")
   mark_as_superbuild(WITHCOLON_VAR)
@@ -140,6 +141,11 @@ check_variable(MULTIPROJECT_VAR "MultiProjectVar")
 check_variable(MarkAsSuperBuild-Test_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
 check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
 
+# mark_as_superbuild: Test use of ALL_PROJECTS
 check_variable(ALL_PROJECTS_VAR "AllProjectsVar")
+
+# mark_as_superbuild: Test use of ALL_PROJECTS with LABELS
+check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_ALLPROJECT "ALL_PROJECTS_VAR_WITH_LABELS")
+check_variable(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
 
 check_variable(WITHCOLON_VAR "c:/path/to/something")

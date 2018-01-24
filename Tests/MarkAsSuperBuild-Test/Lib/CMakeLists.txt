@@ -12,9 +12,6 @@ message(STATUS "Configuring project ${PROJECT_NAME}")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../ArtichokeTestUtility.cmake)
 
-
-check_variable(ALL_PROJECTS_VAR "AllProjectsVar")
-
 if(PROJECT_NAME STREQUAL "LibA")
 
   check_variable(LibA_VAR "LibA")
@@ -35,7 +32,6 @@ elseif(PROJECT_NAME STREQUAL "LibB")
   check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
   check_variable(LibB_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
 
-
 elseif(PROJECT_NAME STREQUAL "LibE")
 
   check_variable(LibE_VAR "LibE")
@@ -43,3 +39,13 @@ elseif(PROJECT_NAME STREQUAL "LibE")
 else()
   message(FATAL_ERROR "Unknown project name: ${PROJECT_NAME}")
 endif()
+
+
+# mark_as_superbuild: Test use of ALL_PROJECTS
+check_variable(ALL_PROJECTS_VAR "AllProjectsVar")
+
+set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
+
+# mark_as_superbuild: Test use of ALL_PROJECTS with LABELS
+check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_ALLPROJECT "ALL_PROJECTS_VAR_WITH_LABELS")
+check_variable(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
