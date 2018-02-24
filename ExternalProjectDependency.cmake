@@ -28,10 +28,6 @@
 
 include(CMakeParseArguments)
 
-if(NOT DEFINED EP_LIST_SEPARATOR)
-  set(EP_LIST_SEPARATOR "^^")
-endif()
-
 #.rst:
 # Global Variables
 # ^^^^^^^^^^^^^^^^
@@ -67,6 +63,17 @@ endif()
 #
 # This variable can be set to explicitly identify the name of the top-level project.
 # If not set, it default to the value of ``CMAKE_PROJECT_NAME``.
+
+#.rst:
+# .. cmake:variable:: EP_LIST_SEPARATOR
+#
+# This variable is used to separate list items when passed in various external project
+# ``..._COMMAND`` options.
+#
+# If defaults to ``^^``.
+if(NOT DEFINED EP_LIST_SEPARATOR)
+  set(EP_LIST_SEPARATOR "^^")
+endif()
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
