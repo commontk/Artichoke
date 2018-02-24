@@ -81,6 +81,33 @@ if(NOT DEFINED EP_LIST_SEPARATOR)
   set(EP_LIST_SEPARATOR "^^")
 endif()
 
+
+#.rst:
+# .. cmake:variable:: EP_GIT_PROTOCOL
+#
+# The value of this variable is controled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
+# automatically defined by including this CMake module. Setting this option allows to update the value of
+# ``EP_GIT_PROTOCOL`` variable.
+#
+# If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
+# The option is enabled by default.
+#
+# The variable ``EP_GIT_PROTOCOL`` can be used when adding external project. For example:
+#
+# .. code-block:: cmake
+#
+#   ExternalProject_Add(${proj}
+#     ${${proj}_EP_ARGS}
+#     GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Foo/Foo.git"
+#     [...]
+#     )
+#
+option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." ON)
+set(EP_GIT_PROTOCOL "git")
+if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+  set(EP_GIT_PROTOCOL "https")
+endif()
+
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
   set(EP_CMAKE_GENERATOR "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
