@@ -4,11 +4,11 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()
 
+project(AlwaysConfigure-Test NONE)
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ${CMAKE_MODULE_PATH})
 include(ExternalProject)
 include(ExternalProjectDependency)
-
-project(AlwaysConfigure-Test NONE)
 
 option(${PROJECT_NAME}_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends" ON)
 mark_as_advanced(${PROJECT_NAME}_SUPERBUILD)

@@ -63,6 +63,12 @@ endif()
 #
 # This variable can be set to explicitly identify the name of the top-level project.
 # If not set, it default to the value of ``CMAKE_PROJECT_NAME``.
+if(NOT DEFINED SUPERBUILD_TOPLEVEL_PROJECT)
+  if(NOT DEFINED CMAKE_PROJECT_NAME)
+    message(FATAL_ERROR "Failed to initialize variable SUPERBUILD_TOPLEVEL_PROJECT. Variable CMAKE_PROJECT_NAME is not defined.")
+  endif()
+  set(SUPERBUILD_TOPLEVEL_PROJECT ${CMAKE_PROJECT_NAME})
+endif()
 
 #.rst:
 # .. cmake:variable:: EP_LIST_SEPARATOR
@@ -106,8 +112,7 @@ set(EP_CMAKE_GENERATOR_TOOLSET "${CMAKE_GENERATOR_TOOLSET}")
 # .. code-block:: cmake
 #
 #  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
-#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'.
 #           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
 #
 #  VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
@@ -279,8 +284,7 @@ set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
 #    )
 #
 #  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
-#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'.
 #           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
 #
 #  VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
@@ -298,11 +302,7 @@ function(_sb_append_to_cmake_args)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if(NOT _sb_PROJECTS AND NOT _sb_ALL_PROJECTS)
-    if(SUPERBUILD_TOPLEVEL_PROJECT)
-      set(_sb_PROJECTS ${SUPERBUILD_TOPLEVEL_PROJECT})
-    else()
-      set(_sb_PROJECTS ${CMAKE_PROJECT_NAME})
-    endif()
+    set(_sb_PROJECTS ${SUPERBUILD_TOPLEVEL_PROJECT})
   endif()
 
   if(_sb_ALL_PROJECTS)
@@ -344,8 +344,7 @@ endfunction()
 # .. code-block:: cmake
 #
 #  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
-#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'.
 #           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
 #
 #  LABELS is a list of label to pass to the <projectname> as CMake CACHE args of the
