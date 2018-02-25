@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /usr/src/Artichoke
     docker:
-      - image: thewtex/centos-build:v1.0.0
+      - image: jcfr/centos-build:centos6-latest
     steps:
       - checkout
       - run:
