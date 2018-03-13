@@ -89,6 +89,13 @@ if(${PROJECT_NAME}_SUPERBUILD)
   set(WITHCOLON_VAR "c:/path/to/something" CACHE PATH "Variable with colon")
   mark_as_superbuild(WITHCOLON_VAR)
 
+  # Using cmake_dependent_option internally sets an INTERNAL cache value used to keep track of the
+  # previous value set by the user. mark_as_superbuild will ignore INTERNAL cache value and instead
+  # pass the non-cached value.
+  set(VAR_WITH_INTERNAL_CACHE OFF CACHE INTERNAL "")
+  set(VAR_WITH_INTERNAL_CACHE ON)
+  mark_as_superbuild(VAR_WITH_INTERNAL_CACHE)
+
   ExternalProject_DeclareLabels(LABELS "DECLARED_LABEL_NO_VAR_MAINPROJECT")
   ExternalProject_DeclareLabels(LABELS "DECLARED_LABEL_NO_VAR_LibA" PROJECTS LibA)
   ExternalProject_DeclareLabels(ALL_PROJECTS LABELS "DECLARED_LABEL_NO_VAR_ALL_PROJECTS")
@@ -161,6 +168,8 @@ check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_ALLPROJECT "ALL_PROJECTS_VAR_
 check_variable(ALL_PROJECTS_VAR_WITH_LABELS "AllProjectsVarWithLabels")
 
 check_variable(WITHCOLON_VAR "c:/path/to/something")
+
+check_variable(VAR_WITH_INTERNAL_CACHE "ON")
 
 # ExternalProject_DeclareLabels tests
 check_variable_defined("MarkAsSuperBuild-Test_EP_LABEL_DECLARED_LABEL_NO_VAR_MAINPROJECT")
