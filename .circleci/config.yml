@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /usr/src/Artichoke
     docker:
-      - image: centosbuild/centos6:latest
+      - image: dockbuild/centos6:latest
     steps:
       - checkout
       - run:
