@@ -12,7 +12,18 @@ string(REPLACE "-build" "" _project_name ${_project_name})
 project(${_project_name} NONE)
 message(STATUS "Configuring project ${PROJECT_NAME}")
 message(STATUS "  CMAKE_EXPORT_COMPILE_COMMANDS: ${CMAKE_EXPORT_COMPILE_COMMANDS}")
+message(STATUS "  CMAKE_JOB_POOL_COMPILE: ${CMAKE_JOB_POOL_COMPILE}")
+message(STATUS "  CMAKE_JOB_POOL_LINK: ${CMAKE_JOB_POOL_LINK}")
+message(STATUS "  CMAKE_JOB_POOLS: ${CMAKE_JOB_POOLS}")
 
 set(expected_CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 check_variable("CMAKE_EXPORT_COMPILE_COMMANDS" "${expected_CMAKE_EXPORT_COMPILE_COMMANDS}")
 
+set(expected_CMAKE_JOB_POOL_COMPILE "compile")
+check_variable("CMAKE_JOB_POOL_COMPILE" "${expected_CMAKE_JOB_POOL_COMPILE}")
+
+set(expected_CMAKE_JOB_POOL_LINK "link")
+check_variable("CMAKE_JOB_POOL_LINK" "${expected_CMAKE_JOB_POOL_LINK}")
+
+set(expected_CMAKE_JOB_POOLS "compile=5;link=2")
+check_variable("CMAKE_JOB_POOLS" "${expected_CMAKE_JOB_POOLS}")

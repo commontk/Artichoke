@@ -14,6 +14,13 @@ if(BUILD_EXTERNAL_PROJECTS)
     message(FATAL_ERROR "CMAKE_EXPORT_COMPILE_COMMANDS should be OFF [${CMAKE_EXPORT_COMPILE_COMMANDS}]!")
   endif()
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+  if(CMAKE_JOB_POOLS OR CMAKE_JOB_POOL_COMPILE OR CMAKE_JOB_POOL_LINK)
+    message(FATAL_ERROR "CMAKE_JOB_* variables should not be set !")
+  endif()
+  set(CMAKE_JOB_POOL_COMPILE "compile")
+  set(CMAKE_JOB_POOL_LINK "link")
+  set(CMAKE_JOB_POOLS "compile=5;link=2")
 endif()
 
 #-----------------------------------------------------------------------------
