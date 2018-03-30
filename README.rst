@@ -38,7 +38,13 @@ Features
 * Support Ninja generator:
 
   * If supported, ``USES_TERMINAL_*`` options are always set to dependent projects.
-  * ``CMAKE_EXPORT_COMPILE_COMMANDS`` variable is automatically propagated to all projects.
+  * The following variables are automatically propagated to all projects:
+
+    * ``CMAKE_EXPORT_COMPILE_COMMANDS``
+    * ``CMAKE_JOB_POOL_COMPILE``
+    * ``CMAKE_JOB_POOL_LINK``
+    * ``CMAKE_JOB_POOLS``
+
 
 * Intuitive handling of USE_SYSTEM options.
 
