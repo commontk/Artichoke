@@ -179,3 +179,32 @@ check_variable_not_defined("MarkAsSuperBuild-Test_EP_LABEL_DECLARED_LABEL_NO_VAR
 
 check_variable_defined("${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_DECLARED_LABEL_NO_VAR_ALL_PROJECTS")
 check_variable(${_ALL_PROJECT_IDENTIFIER}_EP_LABEL_DECLARED_LABEL_NO_VAR_ALL_PROJECTS "")
+
+
+set(proj MYPROJECT)
+set(${proj}_SUPERBUILD TRUE)
+set(${proj}_DEPENDENCIES "")
+set(TESTING_SCOPED_VAR "TESTING_SCOPED_VAR-------------------------------TESTING_SCOPED_VAR-------------------------TESTING_SCOPED_VAR")
+mark_as_superbuild(
+  VARS
+    TESTING_SCOPED_VAR:STRING
+  PROJECTS ${proj}
+)
+set(TESTING_ALL_PROJ_VAR "TESTING_ALL_PROJ_VAR----TESTING_ALL_PROJ_VAR---TESTING_ALL_PROJ_VAR")
+mark_as_superbuild(
+  VARS
+    TESTING_ALL_PROJ_VAR:STRING
+  ALL_PROJECTS
+)
+
+ExternalProject_Include_Dependencies( ${proj}
+   PROJECT_VAR proj
+   EP_ARGS_VAR MYTEST_EP_VAR
+)
+#message(":MYTEST_EP_VAR:${MYTEST_EP_VAR}:")
+
+check_variable_defined("TESTING_SCOPED_VAR")
+check_variable(TESTING_SCOPED_VAR "TESTING_SCOPED_VAR-------------------------------TESTING_SCOPED_VAR-------------------------TESTING_SCOPED_VAR")
+check_variable_defined("proj")
+check_variable_defined("${proj}_SUPERBUILD")
+check_variable_defined("MYTEST_EP_VAR")
