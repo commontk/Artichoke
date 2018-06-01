@@ -84,6 +84,14 @@ add_cmakescript_test(ExternalProject_SetIfNotDefined ArtichokeTest)
 set(tests_source_dir ${CMAKE_SOURCE_DIR})
 add_project_test(AlwaysConfigure SuperBuild)
 add_project_test(MarkAsSuperBuild SuperBuild)
+add_project_test(MarkAsSuperBuild-WithNotFoundVariable SuperBuild)
+if(${CMAKE_VERSION} VERSION_LESS "3.11.4")
+  # See https://gitlab.kitware.com/cmake/cmake/merge_requests/2127
+  set_tests_properties(${testname}
+      PROPERTIES
+        WILL_FAIL TRUE
+      )
+endif()
 add_project_test(IncludeDependencies-MultiCall SuperBuild)
 add_project_test(IncludeDependencies-DEPENDS SuperBuild)
 add_project_test(IncludeDependencies-DifferentGenerator SuperBuild)
