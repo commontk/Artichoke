@@ -29,11 +29,11 @@ if(${PROJECT_NAME}_SUPERBUILD)
   mark_as_superbuild(VARIABLE)
 endif()
 
+set(${PROJECT_NAME}_DEPENDS )
 
 ExternalProject_Include_Dependencies(${PROJECT_NAME} PROJECT_VAR PROJECT_NAME)
 
 if(${PROJECT_NAME}_SUPERBUILD)
-  message("${PROJECT_NAME}_EP_ARGS [${${PROJECT_NAME}_EP_ARGS}]")
   ExternalProject_Add(${PROJECT_NAME}
     ${${PROJECT_NAME}_EP_ARGS}
     DOWNLOAD_COMMAND ""
