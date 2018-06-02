@@ -27,6 +27,13 @@ endif()
 if(${PROJECT_NAME}_SUPERBUILD)
   set(VARIABLE "VARIABLE-NOTFOUND")
   mark_as_superbuild(VARIABLE)
+
+  set(VARIABLE_ALL_PROJECTS "VARIABLE_ALL_PROJECTS-NOTFOUND")
+  mark_as_superbuild(
+    VARS
+      VARIABLE_ALL_PROJECTS
+    ALL_PROJECTS
+    )
 endif()
 
 set(${PROJECT_NAME}_DEPENDS )
@@ -53,4 +60,5 @@ endif()
 include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
 
 check_variable(VARIABLE "VARIABLE-NOTFOUND")
+check_variable(VARIABLE_ALL_PROJECTS "VARIABLE_ALL_PROJECTS-NOTFOUND")
 
