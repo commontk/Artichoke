@@ -25,24 +25,39 @@ else()
 endif()
 
 if(${PROJECT_NAME}_SUPERBUILD)
-  set(VARIABLE "VARIABLE-NOTFOUND")
-  mark_as_superbuild(VARIABLE)
+  set(VAR "VAR_VALUE")
+  mark_as_superbuild(VAR)
 
-  set(VARIABLE_ALL_PROJECTS "VARIABLE_ALL_PROJECTS-NOTFOUND")
+  set(PROJECT_SPECIFIC_VAR "PROJECT_SPECIFIC_VAR_VALUE")
   mark_as_superbuild(
     VARS
-      VARIABLE_ALL_PROJECTS
+      PROJECT_SPECIFIC_VAR:STRING
+    PROJECTS ${PROJECT_NAME}
+    )
+
+  set(ALL_PROJECTS_VAR "ALL_PROJECTS_VAR_VALUE")
+  mark_as_superbuild(
+    VARS
+      ALL_PROJECTS_VAR:STRING
     ALL_PROJECTS
     )
 endif()
 
 set(${PROJECT_NAME}_DEPENDS )
 
-ExternalProject_Include_Dependencies(${PROJECT_NAME} PROJECT_VAR PROJECT_NAME)
+ExternalProject_Include_Dependencies(${PROJECT_NAME}
+  EP_ARGS_VAR MYTEST_EP_ARGS_VAR
+  )
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
+
+check_variable_defined("${PROJECT_NAME}_SUPERBUILD")
 
 if(${PROJECT_NAME}_SUPERBUILD)
+  check_variable_defined("MYTEST_EP_ARGS_VAR")
+
   ExternalProject_Add(${PROJECT_NAME}
-    ${${PROJECT_NAME}_EP_ARGS}
+    ${MYTEST_EP_ARGS_VAR}
     DOWNLOAD_COMMAND ""
     CMAKE_CACHE_ARGS
       -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
@@ -57,8 +72,12 @@ if(${PROJECT_NAME}_SUPERBUILD)
   return()
 endif()
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../ArtichokeTestUtility.cmake)
+check_variable_defined("VAR")
+check_variable(VAR "VAR_VALUE")
 
-check_variable(VARIABLE "VARIABLE-NOTFOUND")
-check_variable(VARIABLE_ALL_PROJECTS "VARIABLE_ALL_PROJECTS-NOTFOUND")
+check_variable_defined("PROJECT_SPECIFIC_VAR")
+check_variable(PROJECT_SPECIFIC_VAR "PROJECT_SPECIFIC_VAR_VALUE")
+
+check_variable_defined("ALL_PROJECTS_VAR")
+check_variable(ALL_PROJECTS_VAR "ALL_PROJECTS_VAR_VALUE")
 
