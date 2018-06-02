@@ -83,6 +83,7 @@ add_cmakescript_test(ExternalProject_SetIfNotDefined ArtichokeTest)
 
 set(tests_source_dir ${CMAKE_SOURCE_DIR})
 add_project_test(AlwaysConfigure SuperBuild)
+add_project_test(ExternalProjectFileLookup SuperBuild)
 add_project_test(MarkAsSuperBuild SuperBuild)
 add_project_test(MarkAsSuperBuild-EP_ARGS_VAR SuperBuild)
 add_project_test(MarkAsSuperBuild-WithNotFoundVariable SuperBuild)

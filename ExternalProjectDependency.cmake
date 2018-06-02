@@ -49,6 +49,13 @@ endif()
 # are searched for if not already found in ``EXTERNAL_PROJECT_DIR``.
 
 #.rst:
+# .. cmake:variable:: EXTERNAL_PROJECT_ADDITIONAL_DIRS
+#
+# If set, this variable represents additional directories in which external project files
+# are searched for if not already found in ``EXTERNAL_PROJECT_DIR`` and
+# ``EXTERNAL_PROJECT_ADDITIONAL_DIR``.
+
+#.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_FILE_PREFIX
 #
 # This variable describes the prefix of the external project files looked up in
@@ -787,18 +794,29 @@ macro(ExternalProject_Include_Dependencies project_name)
   superbuild_stack_push(SB_PROJECT_STACK ${_sb_proj})
 
   # Include dependencies
+  message(STATUS "Include dependencies for ${project_name}")
   foreach(dep ${_sb_DEPENDS})
     get_property(_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _included)
-      # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
       if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       elseif(EXISTS "${${dep}_FILEPATH}")
+        # Originally implemented to support CTK buildsystem
         include(${${dep}_FILEPATH})
       elseif(EXISTS "${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       else()
-        message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        set(_found_ep_cmake FALSE)
+        foreach(_external_project_additional_dir ${EXTERNAL_PROJECT_ADDITIONAL_DIRS})
+          if(EXISTS "${_external_project_additional_dir}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+            include(${_external_project_additional_dir}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
+            set(_found_ep_cmake TRUE)
+            break()
+          endif()
+        endforeach()
+        if(NOT _found_ep_cmake)
+          message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        endif()
       endif()
       set_property(GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED 1)
     endif()
