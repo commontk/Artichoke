@@ -794,7 +794,6 @@ macro(ExternalProject_Include_Dependencies project_name)
   superbuild_stack_push(SB_PROJECT_STACK ${_sb_proj})
 
   # Include dependencies
-  message(STATUS "Include dependencies for ${project_name}")
   foreach(dep ${_sb_DEPENDS})
     get_property(_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _included)
