@@ -589,6 +589,41 @@ function(_sb_is_optional proj output_var)
 endfunction()
 
 #.rst:
+# .. cmake:function:: ExternalProject_Add_Dependencies
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_Add_Dependencies(<project_name>
+#      DEPENDS <dep1> [<dep2> [...]]
+#    )
+#
+#
+# .. code-block:: cmake
+#
+#  DEPENDS  List of additional dependencies to associat with `<project_name>`.
+#
+macro(ExternalProject_Add_Dependencies project_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs DEPENDS)
+  cmake_parse_arguments(_epad "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # Sanity checks
+  if(x${project_name} STREQUAL xDEPENDS)
+    message(FATAL_ERROR "Argument <project_name> is missing !")
+  endif()
+  if(_epad_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Invalid arguments: ${_epad_UNPARSED_ARGUMENTS}")
+  endif()
+
+  if(NOT _epad_DEPENDS)
+    message(FATAL_ERROR "Argument DEPENDS is missing")
+  endif()
+
+  set_property(GLOBAL PROPERTY SB_${project_name}_ADDITIONAL_DEPENDS ${_epad_DEPENDS})
+endmacro()
+
+#.rst:
 # .. cmake:function:: ExternalProject_Include_Dependencies
 #
 # .. code-block:: cmake
@@ -742,6 +777,12 @@ macro(ExternalProject_Include_Dependencies project_name)
   if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SB_FIRST_PASS)
     message(STATUS "SuperBuild - First pass")
     set(SB_FIRST_PASS TRUE)
+  endif()
+
+  # Extra dependencies specified using "ExternalProject_Add_Dependencies"
+  get_property(_sb_ADDITIONAL_DEPENDS GLOBAL PROPERTY SB_${_sb_proj}_ADDITIONAL_DEPENDS)
+  if(NOT "x${_sb_ADDITIONAL_DEPENDS}" STREQUAL "x")
+    list(APPEND _sb_DEPENDS ${_sb_ADDITIONAL_DEPENDS})
   endif()
 
   set(_sb_REQUIRED_DEPENDS)
