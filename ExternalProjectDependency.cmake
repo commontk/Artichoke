@@ -1017,13 +1017,16 @@ endfunction()
 #
 #  ExternalProject_SetIfNotDefined(<var> <defaultvalue> [OBFUSCATE] [QUIET])
 #
-# The default value is set with:
-#  (1) if set, the value environment variable <var>.
-#  (2) if set, the value of local variable variable <var>.
-#  (3) if none of the above, the value passed as a parameter.
+# If *NOT* already defined, the variable <var> is set with:
+#  (1) the value of the environment variable <var>, if defined.
+#  (2) the value of the local variable variable <var>, if defined.
+#  (3) if none of the above is defined, the <defaultvalue> passed as a parameter.
 #
-# Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
-# Setting the optional parameter 'QUIET' will not display any message.
+# Passing the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
+# Passing the optional parameter 'QUIET' will not display any message.
+#
+# For convenience, the value of the cache variable named <var> will
+# be displayed if it was set and if QUIET has not been passed.
 macro(ExternalProject_SetIfNotDefined var defaultvalue)
   set(_obfuscate FALSE)
   set(_quiet FALSE)
@@ -1054,6 +1057,14 @@ macro(ExternalProject_SetIfNotDefined var defaultvalue)
       message(STATUS "Setting '${var}' variable with default value '${_value}'")
     endif()
     set(${var} "${defaultvalue}")
+  endif()
+  get_property(_is_set CACHE ${var} PROPERTY VALUE SET)
+  if(_is_set AND NOT _quiet)
+    set(_value "${${var}}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Cache variable '${var}' set to '${_value}'")
   endif()
 endmacro()
 
