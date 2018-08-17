@@ -19,6 +19,14 @@ function(check_variable var_name expected_value)
   endif()
 endfunction()
 
+function(check_env_variable var_name expected_value)
+  if(NOT "x$ENV{${var_name}}" STREQUAL "x${expected_value}")
+    message(FATAL_ERROR "CMake variable [$ENV{${var_name}}] is incorrectly set !\n"
+                        "current:$ENV{${var_name}}\n"
+                        "expected:${expected_value}")
+  endif()
+endfunction()
+
 function(configure_external_projects_for_test name)
   set(depends "${expected_${name}_DEPENDS}")
   set(indent "${ARGV1}")
