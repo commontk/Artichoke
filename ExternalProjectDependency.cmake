@@ -758,6 +758,11 @@ macro(ExternalProject_Include_Dependencies project_name)
     #message("[${project_name}] Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
   endif()
 
+  # Try to detect if superbuild variable was improperly passed
+  if("${_sb_SB_VAR}" STREQUAL "_SUPERBUILD")
+    message(FATAL_ERROR "SUPERBUILD_VAR value is incorrectly set to '_SUPERBUILD'")
+  endif()
+
   # Set local variables
   set(_sb_DEPENDS ${${_sb_DEPENDS_VAR}})
   set(_sb_USE_SYSTEM ${${_sb_USE_SYSTEM_VAR}})
