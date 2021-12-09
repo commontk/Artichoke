@@ -33,6 +33,10 @@ Features
 
 * Automatically set external options ``LIST_SEPARATOR``, ``CMAKE_GENERATOR``, ``CMAKE_GENERATOR_PLATFORM`` and ``CMAKE_GENERATOR_TOOLSET``.
 
+* If not explicitly enabled, ensure ``User Package Registry`` look up using ``find_*`` commands is disabled.
+
+  * If CMake >= 3.16, set ``CMAKE_FIND_USE_PACKAGE_REGISTRY`` to ``OFF`` otherwise set ``CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY`` to ``ON``.
+
 * Display a well-formatted and user friendly summary of the included external projects. For example, see `here <https://gist.github.com/jcfr/7990506>`_
 
 * Support Ninja generator:
