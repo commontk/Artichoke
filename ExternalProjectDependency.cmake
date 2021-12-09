@@ -448,15 +448,16 @@ function(_sb_get_external_project_arguments proj varname)
   set(_ep_arguments "")
 
   # Automatically propagate CMake options
-  foreach(_cmake_option IN ITEMS
-    CMAKE_EXPORT_COMPILE_COMMANDS
-    CMAKE_JOB_POOL_COMPILE
-    CMAKE_JOB_POOL_LINK
-    CMAKE_JOB_POOLS
+  foreach(_cmake_option_and_type IN ITEMS
+    CMAKE_EXPORT_COMPILE_COMMANDS:BOOL
+    CMAKE_JOB_POOL_COMPILE:STRING
+    CMAKE_JOB_POOL_LINK:STRING
+    CMAKE_JOB_POOLS:STRING
     )
+    _sb_extract_varname_and_vartype(${_cmake_option_and_type} _cmake_option _cmake_option_type)
     if(DEFINED ${_cmake_option})
       list(APPEND _ep_arguments CMAKE_CACHE_ARGS
-        -D${_cmake_option}:BOOL=${${_cmake_option}}
+        -D${_cmake_option}:${_cmake_option_type}=${${_cmake_option}}
         )
     endif()
   endforeach()
