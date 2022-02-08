@@ -448,7 +448,7 @@ function(_sb_get_external_project_arguments proj varname)
   set(_ep_arguments "")
 
   # Option CMAKE_FIND_USE_PACKAGE_REGISTRY was introduced in CMake 3.16
-  if(CMAKE_VERSION VERSION_GREATER "3.15")
+  if(NOT CMAKE_VERSION VERSION_LESS "3.16")
     if(NOT DEFINED CMAKE_FIND_USE_PACKAGE_REGISTRY)
       set(CMAKE_FIND_USE_PACKAGE_REGISTRY OFF)
     endif()
@@ -466,7 +466,7 @@ function(_sb_get_external_project_arguments proj varname)
     CMAKE_JOB_POOL_LINK:STRING
     CMAKE_JOB_POOLS:STRING
     )
-  if(CMAKE_VERSION VERSION_GREATER "3.15")
+  if(NOT CMAKE_VERSION VERSION_LESS "3.16")
     list(APPEND _options
       CMAKE_FIND_USE_PACKAGE_REGISTRY:BOOL
       )
