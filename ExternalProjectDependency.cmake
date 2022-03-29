@@ -92,12 +92,17 @@ endif()
 #.rst:
 # .. cmake:variable:: EP_GIT_PROTOCOL
 #
-# The value of this variable is controlled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
-# automatically defined by including this CMake module. Setting this option allows to update the value of
-# ``EP_GIT_PROTOCOL`` variable.
+# The value of this variable is always set to ``https``.
 #
-# If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
-# The option is enabled by default.
+# Following the removal of git protocol by GitHub, the option
+# ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL`` is obsolete.
+# It allowed to toggle between ``git`` and ``https``.
+# If this option is enabled, a warning is reported and the option is forced to ``OFF``.
+#
+# Similarly, if the variable ``EP_GIT_PROTOCOL`` is already set to ``git``, a warning is reported
+# and the value is forced to ``https``.
+#
+# See details at https://github.blog/2021-09-01-improving-git-protocol-security-github
 #
 # The variable ``EP_GIT_PROTOCOL`` can be used when adding external project. For example:
 #
@@ -109,9 +114,22 @@ endif()
 #     [...]
 #     )
 #
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." ON)
-set(EP_GIT_PROTOCOL "git")
-if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+if(DEFINED ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL AND ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+  message(WARNING "Forcing ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL to OFF (Already set to ON in current scope)")
+  set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL OFF CACHE BOOL "" FORCE)
+endif()
+if(DEFINED EP_GIT_PROTOCOL)
+  if("${EP_GIT_PROTOCOL}" STREQUAL "git")
+    get_property(_value_set_in_cache CACHE EP_GIT_PROTOCOL PROPERTY VALUE SET)
+    if(_value_set_in_cache)
+      message(WARNING "Forcing EP_GIT_PROTOCOL cache variable to 'https' (Already set to '${EP_GIT_PROTOCOL}' in current scope)")
+      set(EP_GIT_PROTOCOL "https" CACHE STRING "" FORCE)
+    else()
+      message(WARNING "Forcing EP_GIT_PROTOCOL variable to 'https' (Already set to '${EP_GIT_PROTOCOL}' in current scope)")
+      set(EP_GIT_PROTOCOL "https")
+    endif()
+  endif()
+else()
   set(EP_GIT_PROTOCOL "https")
 endif()
 
