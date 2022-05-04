@@ -17,7 +17,7 @@ Welcome to Artichoke's documentation!
 Introduction
 ------------
 
-You will find here a `CMake <http://cmake.org/>`_ module allowing to easily create a build system on top of `ExternalProject <http://www.cmake.org/cmake/help/git-master/module/ExternalProject.html>`_ module.
+You will find here a `CMake <https://cmake.org/>`_ module allowing to easily create a build system on top of `ExternalProject <https://cmake.org/cmake/help/git-master/module/ExternalProject.html>`_ module.
 
 
 Features
@@ -75,7 +75,7 @@ Integrating CMake Module in your project
 
 Two possible approaches:
 
-* Use `git submodule <(http://git-scm.com/docs/git-submodule>`_ to reference this repository.
+* Use `git submodule <(https://git-scm.com/docs/git-submodule>`_ to reference this repository.
 
 * Copy `ExternalProjectDependency.cmake` into your source tree making sure you reference the SHA in the associated commit message.
 
