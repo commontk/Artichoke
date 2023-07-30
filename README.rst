@@ -14,6 +14,11 @@ Welcome to Artichoke's documentation!
     :scale: 100%
     :target: https://circleci.com/gh/commontk/Artichoke
 
+.. image:: https://github.com/commontk/Artichoke/actions/workflows/CI.yml/badge.svg
+    :alt: CI
+    :scale: 100%
+    :target: https://github.com/commontk/Artichoke/actions/workflows/CI.yml
+
 Introduction
 ------------
 
