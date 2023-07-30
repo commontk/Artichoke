@@ -12,6 +12,10 @@ on:
       - "**.rst"
       - "Docs/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
