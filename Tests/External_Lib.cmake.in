@@ -10,7 +10,7 @@ ExternalProject_Include_Dependencies(${proj}
   DEPENDS_VAR depends
   EP_ARGS_VAR ep_args
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
-  # Can optionnally be set in top-level CMakeLists.txt before
+  # Can optionally be set in top-level CMakeLists.txt before
   # calling "configure_external_projects_for_test()"
   @LIB_EXTERNAL_PROJECT_INCLUDE_DEPENDENCIES_EXTRA_ARGS@
   )
