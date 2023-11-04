@@ -20,14 +20,14 @@ check_variable(${p}_BLUE "cache-blue")
 ExternalProject_SetIfNotDefined(${p}_BLUE "default-blue")
 check_variable(${p}_BLUE "cache-blue")
 
-# Check that env variable is not overriden
+# Check that env variable is not overridden
 set(ENV{${p}_RED} "env-red")
 check_env_variable(${p}_RED "env-red")
 check_variable_not_defined(${p}_RED)
 ExternalProject_SetIfNotDefined(${p}_RED "default-red")
 check_variable(${p}_RED "env-red")
 
-# Check that local variable is not overriden
+# Check that local variable is not overridden
 set(${p}_GREEN "local-green")
 check_variable(${p}_GREEN "local-green")
 ExternalProject_SetIfNotDefined(${p}_GREEN "default-green")
