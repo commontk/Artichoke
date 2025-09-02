@@ -35,6 +35,8 @@ Features
 
 * If CMake >= 3.24, set ``DOWNLOAD_EXTRACT_TIMESTAMP`` to ``1``. See `CMP0135 <https://cmake.org/cmake/help/latest/policy/CMP0135.html>`_
 
+* If CMake >= 3.28, set ``BUILD_JOB_SERVER_AWARE`` to ``1``. See `Build Step Options <https://cmake.org/cmake/help/latest/module/ExternalProject.html#build-step-options>`_
+
 * If not explicitly enabled, ensure ``User Package Registry`` look up using ``find_*`` commands is disabled.
 
   * If CMake >= 3.16, set ``CMAKE_FIND_USE_PACKAGE_REGISTRY`` to ``OFF`` otherwise set ``CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY`` to ``ON``.
