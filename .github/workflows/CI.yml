@@ -46,6 +46,10 @@ jobs:
       with:
         cmake-version: ${{ matrix.cmake-version }}
 
+    - name: Report CMake version
+      run: |
+        cmake --version
+
     - name: Setup ninja
       uses: urkle/action-get-ninja@v1
 
