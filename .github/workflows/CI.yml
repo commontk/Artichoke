@@ -61,4 +61,4 @@ jobs:
     - name: Test
       run: |
         cd ${{github.workspace}}/build
-        ctest -C Release -V -E ${{ matrix.ctest-exclude }}
+        ctest -C Release -V -E "${{ matrix.ctest-exclude }}"
