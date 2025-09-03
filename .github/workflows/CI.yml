@@ -46,10 +46,10 @@ jobs:
 
     name: Tests on ${{ matrix.os }} using  ${{ matrix.cmake-version }}
     steps:
-    - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v3
 
     - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@187efd9581ed20ee4e03c0dfb9ac2cd5896c4835 # v1.14.1
+      uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
       with:
         cmake-version: ${{ matrix.cmake-version }}
 
