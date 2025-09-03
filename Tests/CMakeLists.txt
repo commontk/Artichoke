@@ -6,6 +6,7 @@ endif()
 
 project(ArtichokeTest NONE)
 
+include(CMakeParseArguments)
 include(CTest)
 
 #
@@ -42,23 +43,41 @@ if(CMAKE_TEST_GENERATOR_TOOLSET)
 endif()
 
 function(add_project_test name label)
+  set(options )
+  set(oneValueArgs SRC_DIR)
+  set(multiValueArgs CMAKE_ARGS)
+  cmake_parse_arguments(arg
+    "${options}" "${oneValueArgs}" "${multiValueArgs}"
+    ${ARGN}
+  )
+
   set(testname ${name}-Test)
   set(_project ${testname})
   set(_dir ${_project})
+  set(_src_dir ${tests_source_dir}/${_dir})
+  if(DEFINED arg_SRC_DIR)
+    set(_src_dir ${arg_SRC_DIR})
+  endif()
 
-  add_test(${_prefix}${testname}_clean ${CMAKE_COMMAND}
+  add_test(${testname}_clean ${CMAKE_COMMAND}
       -E remove_directory ${tests_binary_dir}/${_dir}
       )
 
+  set(build_options_args )
+  if(NOT "${arg_CMAKE_ARGS}" STREQUAL "")
+    set(build_options_args --build-options ${arg_CMAKE_ARGS})
+  endif()
+
   add_test(${testname} ${CMAKE_CTEST_COMMAND}
       --build-and-test
-      "${tests_source_dir}/${_dir}"
+      "${_src_dir}"
       "${tests_binary_dir}/${_dir}"
       --build-config Release
       ${build_generator_args}
       --build-project ${_project}
       --build-exe-dir "${tests_binary_dir}/${_dir}"
       --force-new-ctest-process
+      ${build_options_args}
       --test-command ${CMAKE_CTEST_COMMAND} -V
       )
 
@@ -111,3 +130,26 @@ add_project_test(IncludeDependencies-DEPENDS SuperBuild)
 add_project_test(IncludeDependencies-DifferentGenerator SuperBuild)
 add_project_test(IncludeDependencies-USES_TERMINAL SuperBuild)
 add_project_test(IncludeDependencies-PropagateCMakeOptions SuperBuild)
+
+#
+# IncludeDependencies-JOB_SERVER_AWARE tests
+#
+set(parallel 2)
+set(casename "IncludeDependencies-JOB_SERVER_AWARE")
+
+add_project_test("${casename}-B" SuperBuild
+  CMAKE_ARGS
+    -DTEST_JOB_SERVER_AWARE_STEP:STRING=BUILD
+    -DEXPECTED_PARALLEL_LEVEL:STRING=${parallel}
+  SRC_DIR ${tests_source_dir}/${casename}-Test
+  )
+set_property(TEST ${testname}
+  APPEND PROPERTY
+    ENVIRONMENT "CMAKE_BUILD_PARALLEL_LEVEL=${parallel}"
+  )
+if(${CMAKE_VERSION} VERSION_LESS "3.9")
+  set_tests_properties(${testname}
+      PROPERTIES
+        WILL_FAIL TRUE
+      )
+endif()
