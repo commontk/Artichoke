@@ -93,12 +93,12 @@ jobs:
 
     - name: Configure
       run: |
-        mkdir ${{github.workspace}}/build && cd $_
-        cmake -DCMAKE_BUILD_TYPE:STRING=Release ${{github.workspace}}/Tests
+        mkdir $GITHUB_WORKSPACE/build && cd $_
+        cmake -DCMAKE_BUILD_TYPE:STRING=Release $GITHUB_WORKSPACE/Tests
 
     - name: Test
       run: |
-        cd ${{github.workspace}}/build
+        cd $GITHUB_WORKSPACE/build
         ctest -C Release -V
 
   pass: # This job does nothing and is only used for the branch protection
