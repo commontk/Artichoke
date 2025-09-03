@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 
-if(POLICY CMP0054)
+if(POLICY CMP0054 AND CMAKE_VERSION VERSION_LESS "4.0")
   cmake_policy(SET CMP0054 OLD)
 endif()
 
@@ -56,16 +56,24 @@ macro(add_project_test name label)
       "${tests_binary_dir}/${_dir}"
       --build-config Release
       ${build_generator_args}
-      --build-project ${project}
+      --build-project ${_project}
       --build-exe-dir "${tests_binary_dir}/${_dir}"
       --force-new-ctest-process
       --test-command ${CMAKE_CTEST_COMMAND} -V
       )
 
+  set(test_environment)
+  if("$ENV{CMAKE_POLICY_VERSION_MINIMUM}" STREQUAL "" AND DEFINED CMAKE_POLICY_VERSION_MINIMUM)
+    set(test_environment ENVIRONMENT
+      "CMAKE_POLICY_VERSION_MINIMUM=${CMAKE_POLICY_VERSION_MINIMUM}"
+      )
+  endif()
+
   set_tests_properties(${testname}
       PROPERTIES
         DEPENDS ${testname}_clean
         LABELS "CMake;${label}"
+        ${test_environment}
       )
 endmacro()
 

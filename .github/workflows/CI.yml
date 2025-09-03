@@ -36,6 +36,13 @@ jobs:
         include:
           - cmake-version: "2.8.x"
             ctest-exclude: "IncludeDependencies-DifferentGenerator-Test"
+          # Starting with CMake 4.x, compatibility with versions of CMake older than 3.5 is removed.
+          - cmake-version: "4.0.x"
+            cmake-args: "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+          - cmake-version: "4.1.x"
+            cmake-args: "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+          - cmake-version: "latest"
+            cmake-args: "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 
     name: Tests on ${{ matrix.os }} using  ${{ matrix.cmake-version }}
     steps:
@@ -56,7 +63,7 @@ jobs:
     - name: Configure
       run: |
         mkdir ${{github.workspace}}/build && cd $_
-        cmake -DCMAKE_BUILD_TYPE:STRING=Release ${{github.workspace}}/Tests
+        cmake -DCMAKE_BUILD_TYPE:STRING=Release ${{matrix.cmake-args }} ${{github.workspace}}/Tests
 
     - name: Test
       run: |

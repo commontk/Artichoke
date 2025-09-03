@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 
-if(POLICY CMP0054)
+if(POLICY CMP0054 AND CMAKE_VERSION VERSION_LESS "4.0")
   cmake_policy(SET CMP0054 OLD)
 endif()
 
