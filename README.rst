@@ -9,11 +9,6 @@ Welcome to Artichoke's documentation!
     :scale: 100%
     :target: https://readthedocs.org/builds/cmake-artichoke/
 
-.. image:: https://circleci.com/gh/commontk/Artichoke.svg?style=svg
-    :alt: status
-    :scale: 100%
-    :target: https://circleci.com/gh/commontk/Artichoke
-
 .. image:: https://github.com/commontk/Artichoke/actions/workflows/CI.yml/badge.svg
     :alt: CI
     :scale: 100%
@@ -107,5 +102,4 @@ Test
   cd ArtichokeTest-build
   cmake ../Artichoke/Tests
   ctest
-
 
