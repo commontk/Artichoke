@@ -41,7 +41,7 @@ if(CMAKE_TEST_GENERATOR_TOOLSET)
     )
 endif()
 
-macro(add_project_test name label)
+function(add_project_test name label)
   set(testname ${name}-Test)
   set(_project ${testname})
   set(_dir ${_project})
@@ -64,7 +64,7 @@ macro(add_project_test name label)
 
   set(test_environment)
   if("$ENV{CMAKE_POLICY_VERSION_MINIMUM}" STREQUAL "" AND DEFINED CMAKE_POLICY_VERSION_MINIMUM)
-    set(test_environment ENVIRONMENT
+    list(APPEND test_environment
       "CMAKE_POLICY_VERSION_MINIMUM=${CMAKE_POLICY_VERSION_MINIMUM}"
       )
   endif()
@@ -73,9 +73,11 @@ macro(add_project_test name label)
       PROPERTIES
         DEPENDS ${testname}_clean
         LABELS "CMake;${label}"
-        ${test_environment}
+        ENVIRONMENT "${test_environment}"
       )
-endmacro()
+
+  set(testname ${testname} PARENT_SCOPE)
+endfunction()
 
 #
 # Add 'CMake script' Tests
