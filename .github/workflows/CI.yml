@@ -79,7 +79,8 @@ jobs:
       fail-fast: false
       matrix:
         image: [
-          "dockbuild/centos7-devtoolset7-gcc7:latest"
+          "dockbuild/centos7-devtoolset7-gcc7:latest",
+          "dockbuild/almalinux8-devtoolset14-gcc14:latest"
           ]
 
     name: Tests on ${{ matrix.image }}
