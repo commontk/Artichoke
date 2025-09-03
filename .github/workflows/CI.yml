@@ -69,3 +69,16 @@ jobs:
       run: |
         cd ${{github.workspace}}/build
         ctest -C Release -V -E "${{ matrix.ctest-exclude }}"
+
+  pass: # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+    - tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@2765efec08f0fd63e83ad900f5fd75646be69ff6 # v1.2.2
+      with:
+        jobs: ${{ toJSON(needs) }}
